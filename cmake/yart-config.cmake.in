@@ -1,0 +1,11 @@
+get_filename_component(YART_CMAKE_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+
+find_package(Eigen3 REQUIRED)
+find_package(Embree 3.0 REQUIRED)
+find_package(OpenMP)
+
+if(NOT TARGET yart::yart)
+    include(${YART_CMAKE_DIR}/yart-targets.cmake)
+endif()
+
+set(YART_LIBRARIES yarts::yarts)
