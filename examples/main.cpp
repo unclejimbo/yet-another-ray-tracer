@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
     std::cout << "Time used(ms): " << tspent.count() << std::endl;
     std::cout << "Mrays/sec: " << mrays << std::endl;
 
-    stbi_write_png("cnm.png",
+    stbi_write_png("out.png",
                    g_width,
                    g_height,
                    3,
