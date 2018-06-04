@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
     auto tend = std::chrono::high_resolution_clock::now();
     auto tspent =
         std::chrono::duration_cast<std::chrono::milliseconds>(tend - tstart);
-    auto mrays = (num_rays / 10000) / (tspent.count() / 1000);
+    auto mrays = (num_rays / 1000000) / (tspent.count() / 1000);
     std::cout << "Time used(ms): " << tspent.count() << std::endl;
     std::cout << "Mrays/sec: " << mrays << std::endl;
 
