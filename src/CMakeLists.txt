@@ -22,7 +22,7 @@ add_library(yart::yart ALIAS yart)
 target_compile_features(yart PUBLIC cxx_std_17)
 target_compile_options(yart PRIVATE
     -pipe -march=native
-    $<$<CONFIG:Debug>:-O0 -Wall -Wextra>
+    $<$<CONFIG:Debug>:-O0 -Wall -Wextra -fno-inline>
 )
 
 target_include_directories(yart
