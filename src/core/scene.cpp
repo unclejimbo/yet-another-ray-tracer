@@ -28,13 +28,13 @@ void Scene::add(Geometry& geom, Material& mat)
     _need_commit = true;
 }
 
-void Scene::render(const Camera& camera,
-                   unsigned char* pixels,
-                   unsigned width,
-                   unsigned height,
-                   unsigned samples,
-                   bool interleaved,
-                   unsigned depth)
+unsigned Scene::render(const Camera& camera,
+                       unsigned char* pixels,
+                       unsigned width,
+                       unsigned height,
+                       unsigned samples,
+                       bool interleaved,
+                       unsigned depth)
 {
     if (_need_commit) {
         rtcCommitScene(_raw);
@@ -48,16 +48,18 @@ void Scene::render(const Camera& camera,
     std::minstd_rand rd_gen(rd());
     std::uniform_real_distribution<> rd_number(0.0f, 1.0f);
 
-#pragma omp parallel for
+    unsigned num_rays = 0;
+#pragma omp parallel for schedule(dynamic) reduction(+ : num_rays)
     for (unsigned y = 0; y < height; ++y) {
-#pragma omp parallel for
         for (unsigned x = 0; x < width; ++x) {
             Eigen::Array3f irradiance(0.0f, 0.0f, 0.0f);
             for (unsigned s = 0; s < samples; ++s) {
                 auto u = static_cast<float>(x + rd_number(rd_gen)) / width;
                 auto v = static_cast<float>(y + rd_number(rd_gen)) / height;
                 auto rayhit = camera.gen_ray(u, v);
-                irradiance += _path_tracing(context, rayhit, depth);
+                Eigen::Array3f ir;
+                num_rays += _path_tracing(context, rayhit, ir, depth);
+                irradiance += ir;
             }
 
             irradiance /= samples;
@@ -85,11 +87,13 @@ void Scene::render(const Camera& camera,
             }
         }
     }
+    return num_rays;
 }
 
-Eigen::Array3f Scene::_path_tracing(RTCIntersectContext& context,
-                                    RTCRayHit& rayhit,
-                                    unsigned depth)
+unsigned Scene::_path_tracing(RTCIntersectContext& context,
+                              RTCRayHit& rayhit,
+                              Eigen::Array3f& irradiance,
+                              unsigned depth)
 {
     rtcIntersect1(_raw, &context, &rayhit);
     if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
@@ -108,17 +112,23 @@ Eigen::Array3f Scene::_path_tracing(RTCIntersectContext& context,
         if (depth > 0 && _mats[rayhit.hit.geomID]->scatter(
                              raydir, hitpt, normal, scattered, attenuation)) {
             auto secondary = make_rayhit(hitpt, scattered, 0.0001f);
-            return attenuation * _path_tracing(context, secondary, depth - 1);
+            Eigen::Array3f traced;
+            auto num_bounces =
+                _path_tracing(context, secondary, traced, depth - 1);
+            irradiance = attenuation * traced;
+            return 1 + num_bounces;
         }
         else {
-            return Eigen::Vector3f::Zero();
+            irradiance = Eigen::Vector3f::Zero();
+            return 1;
         }
     }
     else { // background
         auto raydir = get_raydir(rayhit).normalized();
         float t = 0.5f * (raydir(1) + 1.0f);
-        return (1.0f - t) * Eigen::Vector3f::Ones() +
-               t * Eigen::Vector3f(0.5f, 0.7f, 1.0f);
+        irradiance = (1.0f - t) * Eigen::Vector3f::Ones() +
+                     t * Eigen::Vector3f(0.5f, 0.7f, 1.0f);
+        return 1;
     }
 }
 

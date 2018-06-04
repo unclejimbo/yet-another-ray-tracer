@@ -6,6 +6,7 @@
 #include <yart/material/dielectric.h>
 #include <yart/camera/perspective.h>
 #include <array>
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <random>
@@ -92,8 +93,15 @@ int main(int argc, char* argv[])
     camera.zoom(10.0f);
 
     std::array<unsigned char, g_width * g_height * 3> pixels;
-    scene.render(
+    auto tstart = std::chrono::high_resolution_clock::now();
+    auto num_rays = scene.render(
         camera, pixels.data(), g_width, g_height, g_samples, true, g_depth);
+    auto tend = std::chrono::high_resolution_clock::now();
+    auto tspent =
+        std::chrono::duration_cast<std::chrono::milliseconds>(tend - tstart);
+    auto mrays = (num_rays / 10000) / (tspent.count() / 1000);
+    std::cout << "Time used(ms): " << tspent.count() << std::endl;
+    std::cout << "Mrays/sec: " << mrays << std::endl;
 
     stbi_write_png("cnm.png",
                    g_width,

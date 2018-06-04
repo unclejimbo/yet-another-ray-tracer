@@ -19,18 +19,19 @@ public:
     explicit Scene(const Device& device);
     ~Scene();
     void add(Geometry& geom, Material& mat);
-    void render(const Camera& camera,
-                unsigned char* pixels,
-                unsigned width,
-                unsigned height,
-                unsigned samples = 1,
-                bool interleaved = false,
-                unsigned depth = 10);
+    unsigned render(const Camera& camera,
+                    unsigned char* pixels,
+                    unsigned width,
+                    unsigned height,
+                    unsigned samples = 1,
+                    bool interleaved = false,
+                    unsigned depth = 10);
 
 private:
-    Eigen::Array3f _path_tracing(RTCIntersectContext& context,
-                                 RTCRayHit& rayhit,
-                                 unsigned depth);
+    unsigned _path_tracing(RTCIntersectContext& context,
+                           RTCRayHit& rayhit,
+                           Eigen::Array3f& irradiance,
+                           unsigned depth);
 
 private:
     RTCScene _raw;
