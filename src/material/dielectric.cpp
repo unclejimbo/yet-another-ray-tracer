@@ -1,8 +1,17 @@
 #include <yart/material/dielectric.h>
+#include <cmath>
+#include <random>
 #include "../util/rayhit.h"
 
 namespace yart
 {
+
+static inline float _schlick_fresnel(float cosine, float rindex)
+{
+    float r0 = (1.0f - rindex) / (1.0f + rindex);
+    r0 = r0 * r0;
+    return r0 + (1.0f - r0) * std::pow((1.0f - cosine), 5);
+}
 
 bool Dielectric::scatter(const Eigen::Vector3f& rayin,
                          const Eigen::Vector3f& hitpt,
@@ -11,25 +20,38 @@ bool Dielectric::scatter(const Eigen::Vector3f& rayin,
                          Eigen::Array3f& attenuation) const
 {
     attenuation = Eigen::Array3f::Ones();
+
     Eigen::Vector3f outward_normal;
-    float ni_over_nt;
+    float ni_over_nt, cosine, reflect_prob;
     if (rayin.dot(normal) > 0.0f) { // solid to air
         outward_normal = -normal;
         ni_over_nt = rindex;
+        cosine = rindex * rayin.normalized().dot(normal);
     }
     else { // air to solid
         outward_normal = normal;
         ni_over_nt = 1.0f / rindex;
+        cosine = -rayin.normalized().dot(normal);
     }
+
     auto refracted = refract(rayin, outward_normal.normalized(), ni_over_nt);
     if (refracted.has_value()) {
-        rayout = *refracted;
-        return true;
+        reflect_prob = _schlick_fresnel(cosine, rindex);
+        std::random_device rd;
+        std::minstd_rand rd_gen(rd());
+        std::uniform_real_distribution<> rd_number(0.0f, 1.0f);
+        if (rd_number(rd_gen) < reflect_prob) { // fresnel
+            rayout = reflect(rayin, normal.normalized());
+        }
+        else { // transmission
+            rayout = *refracted;
+        }
     }
-    else {
+    else { // total reflection
         rayout = reflect(rayin, normal.normalized());
-        return false;
     }
+
+    return true;
 }
 
 } // namespace yart
