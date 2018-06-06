@@ -4,8 +4,11 @@ add_executable(yart-example
 
 target_compile_features(yart-example PUBLIC cxx_std_17)
 target_compile_options(yart-example PRIVATE
-    -pipe -march=native
-    $<$<CONFIG:Debug>:-O0 -Wall -Wextra>
+    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
+        -pipe -march=native
+        $<$<CONFIG:Debug>:-O0 -Wall -Wextra>>
+    $<$<CXX_COMPILER_ID:MSVC>:
+        $<$<CONFIG:Debug>:/Od /Wall /Zi>>
 )
 
 target_include_directories(yart-example PRIVATE

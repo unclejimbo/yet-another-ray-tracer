@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
                                    g_height);
     camera.zoom(10.0f);
 
-    std::array<unsigned char, g_width * g_height * 3> pixels;
+    std::vector<unsigned char> pixels(g_width * g_height * 3);
     auto tstart = std::chrono::high_resolution_clock::now();
     auto num_rays = scene.render(
         camera, pixels.data(), g_width, g_height, g_samples, true, g_depth);

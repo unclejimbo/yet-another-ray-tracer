@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <yart/camera/perspective.h>
 #include "../util/assert.h"
 #include "../util/random.h"

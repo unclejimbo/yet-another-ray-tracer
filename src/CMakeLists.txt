@@ -1,5 +1,3 @@
-# TODO: msvc is not tested
-
 option(BUILD_SHARED_LIBS "Build shared library" ON)
 
 find_package(Eigen3 REQUIRED)
@@ -21,13 +19,17 @@ add_library(yart::yart ALIAS yart)
 
 target_compile_features(yart PUBLIC cxx_std_17)
 target_compile_options(yart PRIVATE
-    -pipe -march=native
-    $<$<CONFIG:Debug>:-O0 -Wall -Wextra -fno-inline>
+    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
+        -pipe -march=native
+        $<$<CONFIG:Debug>:-O0 -Wall -Wextra -fno-inline>>
+    $<$<CXX_COMPILER_ID:MSVC>:
+        $<$<CONFIG:Debug>:/Od /Wall /Zi>>
 )
 
 target_include_directories(yart
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+        ${EMBREE_INCLUDE_DIRS}
         $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}

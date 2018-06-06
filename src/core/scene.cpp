@@ -50,10 +50,10 @@ unsigned Scene::render(const Camera& camera,
 
     unsigned num_rays = 0;
 #pragma omp parallel for schedule(dynamic) reduction(+ : num_rays)
-    for (unsigned y = 0; y < height; ++y) {
-        for (unsigned x = 0; x < width; ++x) {
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
             Eigen::Array3f irradiance(0.0f, 0.0f, 0.0f);
-            for (unsigned s = 0; s < samples; ++s) {
+            for (int s = 0; s < samples; ++s) {
                 auto u = static_cast<float>(x + rd_number(rd_gen)) / width;
                 auto v = static_cast<float>(y + rd_number(rd_gen)) / height;
                 auto rayhit = camera.gen_ray(u, v);

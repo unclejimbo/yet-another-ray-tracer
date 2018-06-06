@@ -1,6 +1,8 @@
 # directories
 .vscode
+.vs
 build
 
 # files
 .clang-format
+CMakeSettings.json
