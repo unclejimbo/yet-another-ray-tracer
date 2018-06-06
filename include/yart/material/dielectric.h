@@ -1,11 +1,12 @@
 #pragma once
 
+#include "../core/common.h"
 #include "../core/material.h"
 
 namespace yart
 {
 
-class Dielectric : public Material
+class YART_API Dielectric : public Material
 {
 public:
     explicit Dielectric(float rindex) : rindex(rindex) {}

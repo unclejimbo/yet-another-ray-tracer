@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common.h"
 #include <embree3/rtcore.h>
 #include <Eigen/Dense>
 #include <limits>
@@ -20,7 +21,7 @@ struct Film
  *
  *  This class uses the right-handed coordinate system.
  */
-class Camera
+class YART_API Camera
 {
 public:
     /** Create a Camera with default paramters.*/

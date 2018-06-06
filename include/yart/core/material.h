@@ -1,12 +1,13 @@
 #pragma once
 
+#include "common.h"
 #include <embree3/rtcore.h>
 #include <Eigen/Dense>
 
 namespace yart
 {
 
-class Material
+class YART_API Material
 {
 public:
     virtual ~Material() = default;

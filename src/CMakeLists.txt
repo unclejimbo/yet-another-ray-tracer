@@ -1,5 +1,3 @@
-option(BUILD_SHARED_LIBS "Build shared library" ON)
-
 find_package(Eigen3 REQUIRED)
 find_package(Embree 3.0 REQUIRED)
 find_package(OpenMP)
@@ -16,6 +14,11 @@ add_library(yart
     "${CMAKE_CURRENT_SOURCE_DIR}/material/dielectric.cpp"
 )
 add_library(yart::yart ALIAS yart)
+
+option(BUILD_SHARED_LIBS "Build shared library" ON)
+target_compile_definitions(yart PUBLIC
+    $<$<BOOL:${BUILD_SHARED_LIBS}>:YART_EXPORTS>
+)
 
 target_compile_features(yart PUBLIC cxx_std_17)
 target_compile_options(yart PRIVATE

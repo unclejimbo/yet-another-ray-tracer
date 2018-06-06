@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common.h"
 #include <embree3/rtcore.h>
 
 namespace yart
@@ -7,7 +8,7 @@ namespace yart
 
 class Device;
 
-class Geometry
+class YART_API Geometry
 {
     friend class Scene;
 

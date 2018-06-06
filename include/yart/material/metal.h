@@ -1,11 +1,12 @@
 #pragma once
 
+#include "../core/common.h"
 #include "../core/material.h"
 
 namespace yart
 {
 
-class Metal : public Material
+class YART_API Metal : public Material
 {
 public:
     Metal(const Eigen::Array3f& albedo, float roughness);

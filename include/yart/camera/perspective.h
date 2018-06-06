@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../core/common.h"
 #include "../core/camera.h"
 
 namespace yart
@@ -10,7 +11,7 @@ namespace yart
  *  The range of visible frustum of a perspective camera is determined
  *  by the field of view and aspect ratio.
  */
-class PerspectiveCamera : public Camera
+class YART_API PerspectiveCamera : public Camera
 {
 public:
     /** Create a PerspectiveCamera using default parameters.*/

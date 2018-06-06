@@ -1,11 +1,12 @@
 #pragma once
 
+#include "../core/common.h"
 #include "../core/material.h"
 
 namespace yart
 {
 
-class Lambertian : public Material
+class YART_API Lambertian : public Material
 {
 public:
     explicit Lambertian(const Eigen::Array3f& albedo) : albedo(albedo) {}

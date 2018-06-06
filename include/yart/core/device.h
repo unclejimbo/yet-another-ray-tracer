@@ -1,11 +1,12 @@
 #pragma once
 
+#include "common.h"
 #include <embree3/rtcore.h>
 
 namespace yart
 {
 
-class Device
+class YART_API Device
 {
     friend class Geometry;
     friend class Scene;

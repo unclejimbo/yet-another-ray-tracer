@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common.h"
 #include <embree3/rtcore.h>
 #include <Eigen/Dense>
 #include <vector>
@@ -12,7 +13,7 @@ class Geometry;
 class Material;
 class Camera;
 
-class Scene
+class YART_API Scene
 {
 
 public:
