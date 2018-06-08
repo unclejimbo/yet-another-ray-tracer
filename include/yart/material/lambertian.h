@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../core/common.h"
-#include "../core/material.h"
+#include <yart/core/material.h>
 
 namespace yart
 {

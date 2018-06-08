@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common.h"
+#include <yart/core/common.h>
 #include <embree3/rtcore.h>
 
 namespace yart

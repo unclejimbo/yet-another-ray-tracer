@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../core/common.h"
-#include "../core/camera.h"
+#include <yart/core/camera.h>
 
 namespace yart
 {

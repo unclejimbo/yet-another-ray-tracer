@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../core/common.h"
-#include "../core/geometry.h"
+#include <yart/core/geometry.h>
 #include <Eigen/Dense>
 
 namespace yart

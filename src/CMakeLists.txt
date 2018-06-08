@@ -16,8 +16,10 @@ add_library(yart
 add_library(yart::yart ALIAS yart)
 
 option(BUILD_SHARED_LIBS "Build shared library" ON)
-target_compile_definitions(yart PUBLIC
-    $<$<BOOL:${BUILD_SHARED_LIBS}>:YART_EXPORTS>
+include(GenerateExportHeader)
+generate_export_header(yart
+    EXPORT_MACRO_NAME YART_API
+    EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/include/yart/core/common.h
 )
 
 target_compile_features(yart PUBLIC cxx_std_17)
@@ -32,6 +34,7 @@ target_compile_options(yart PRIVATE
 target_include_directories(yart
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
         $<BUILD_INTERFACE:${EMBREE_INCLUDE_DIRS}>
         $<INSTALL_INTERFACE:include>
     PRIVATE
@@ -62,7 +65,11 @@ install(TARGETS yart
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     INCLUDES DESTINATION ${EMBREE_INCLUDE_DIRS}
 )
+
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/yart
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/yart
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
