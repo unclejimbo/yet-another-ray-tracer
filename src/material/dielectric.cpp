@@ -13,13 +13,13 @@ static inline float _schlick_fresnel(float cosine, float rindex)
     return r0 + (1.0f - r0) * std::pow((1.0f - cosine), 5);
 }
 
-bool Dielectric::scatter(const Eigen::Vector3f& rayin,
-                         const Eigen::Vector3f& hitpt,
-                         const Eigen::Vector3f& normal,
+bool Dielectric::scatter(const RTCRayHit& rayhit,
                          Eigen::Vector3f& rayout,
                          Eigen::Array3f& attenuation) const
 {
     attenuation = Eigen::Array3f::Ones();
+    auto rayin = get_raydir(rayhit);
+    auto normal = get_hitnormal(rayhit);
 
     Eigen::Vector3f outward_normal;
     float ni_over_nt, cosine, reflect_prob;

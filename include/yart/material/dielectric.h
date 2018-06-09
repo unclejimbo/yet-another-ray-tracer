@@ -9,9 +9,7 @@ class YART_API Dielectric : public Material
 {
 public:
     explicit Dielectric(float rindex) : rindex(rindex) {}
-    bool scatter(const Eigen::Vector3f& rayin,
-                 const Eigen::Vector3f& hitpt,
-                 const Eigen::Vector3f& normal,
+    bool scatter(const RTCRayHit& rayhit,
                  Eigen::Vector3f& rayout,
                  Eigen::Array3f& attenuation) const override;
 

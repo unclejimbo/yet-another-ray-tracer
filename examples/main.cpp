@@ -4,6 +4,7 @@
 #include <yart/material/lambertian.h>
 #include <yart/material/metal.h>
 #include <yart/material/dielectric.h>
+#include <yart/texture/constant.h>
 #include <yart/camera/perspective.h>
 #include <array>
 #include <chrono>
@@ -21,6 +22,7 @@ constexpr const unsigned g_depth = 50;
 
 void gen_rand_scene(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
                     std::vector<std::unique_ptr<yart::Material>>& materials,
+                    std::vector<std::unique_ptr<yart::Texture>>& textures,
                     const yart::Device& device)
 {
     std::random_device rd;
@@ -29,7 +31,11 @@ void gen_rand_scene(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
 
     geometries.push_back(std::make_unique<yart::Sphere>(
         device, 1000.0f, Eigen::Vector3f(0.0f, -1000.0f, 0.0f)));
-    materials.push_back(std::make_unique<yart::Lambertian>(0.5f, 0.5f, 0.5f));
+    textures.push_back(
+        std::make_unique<yart::ConstantTexture>(0.5f, 0.5f, 0.5f));
+    materials.push_back(
+        std::make_unique<yart::Lambertian>(textures.back().get()));
+
     for (int a = -11; a < 11; ++a) {
         for (int b = -11; b < 11; ++b) {
             float rd_mat = rd_number(rd_gen);
@@ -40,10 +46,12 @@ void gen_rand_scene(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
                 geometries.push_back(
                     std::make_unique<yart::Sphere>(device, 0.2f, center));
                 if (rd_mat < 0.8f) { // diffuse
-                    materials.push_back(std::make_unique<yart::Lambertian>(
+                    textures.push_back(std::make_unique<yart::ConstantTexture>(
                         rd_number(rd_gen) * rd_number(rd_gen),
                         rd_number(rd_gen) * rd_number(rd_gen),
                         rd_number(rd_gen) * rd_number(rd_gen)));
+                    materials.push_back(std::make_unique<yart::Lambertian>(
+                        textures.back().get()));
                 }
                 else if (rd_mat < 0.95f) { // metal
                     materials.push_back(std::make_unique<yart::Metal>(
@@ -65,7 +73,10 @@ void gen_rand_scene(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
     materials.push_back(std::make_unique<yart::Dielectric>(1.5f));
     geometries.push_back(std::make_unique<yart::Sphere>(
         device, 1.0f, Eigen::Vector3f(-4.0f, 1.0f, 0.0f)));
-    materials.push_back(std::make_unique<yart::Lambertian>(0.4f, 0.2f, 0.1f));
+    textures.push_back(
+        std::make_unique<yart::ConstantTexture>(0.4f, 0.2f, 0.1f));
+    materials.push_back(
+        std::make_unique<yart::Lambertian>(textures.back().get()));
     geometries.push_back(std::make_unique<yart::Sphere>(
         device, 1.0f, Eigen::Vector3f(4.0f, 1.0f, 0.0f)));
     materials.push_back(std::make_unique<yart::Metal>(0.7f, 0.6f, 0.5f, 0.0f));
@@ -77,7 +88,8 @@ int main(int argc, char* argv[])
 
     std::vector<std::unique_ptr<yart::Geometry>> geometries;
     std::vector<std::unique_ptr<yart::Material>> materials;
-    gen_rand_scene(geometries, materials, device);
+    std::vector<std::unique_ptr<yart::Texture>> textures;
+    gen_rand_scene(geometries, materials, textures, device);
     auto scene = yart::Scene(device);
     for (size_t i = 0; i < geometries.size(); ++i) {
         scene.add(*geometries[i], *materials[i]);

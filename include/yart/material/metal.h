@@ -10,9 +10,7 @@ class YART_API Metal : public Material
 public:
     Metal(const Eigen::Array3f& albedo, float roughness);
     Metal(float r, float g, float b, float roughness);
-    bool scatter(const Eigen::Vector3f& rayin,
-                 const Eigen::Vector3f& hitpt,
-                 const Eigen::Vector3f& normal,
+    bool scatter(const RTCRayHit& rayhit,
                  Eigen::Vector3f& rayout,
                  Eigen::Array3f& attenuation) const override;
 

@@ -16,13 +16,13 @@ Metal::Metal(float r, float g, float b, float roughness) : albedo(r, g, b)
     this->roughness = std::clamp(roughness, 0.0f, 1.0f);
 }
 
-bool Metal::scatter(const Eigen::Vector3f& rayin,
-                    const Eigen::Vector3f& hitpt,
-                    const Eigen::Vector3f& normal,
+bool Metal::scatter(const RTCRayHit& rayhit,
                     Eigen::Vector3f& rayout,
                     Eigen::Array3f& attenuation) const
 
 {
+    auto rayin = get_raydir(rayhit);
+    auto normal = get_hitnormal(rayhit);
     rayout = reflect(rayin, normal.normalized());
     rayout = rayout + roughness * random_in_unit_sphere();
     attenuation = albedo;

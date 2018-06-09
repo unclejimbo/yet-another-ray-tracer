@@ -104,13 +104,11 @@ unsigned Scene::_path_tracing(RTCIntersectContext& context,
         // color *= 0.5f;
         // return color;
 
-        auto raydir = get_raydir(rayhit);
-        auto hitpt = get_hitpt(rayhit);
-        auto normal = get_hitnormal(rayhit);
         Eigen::Vector3f scattered;
         Eigen::Array3f attenuation;
-        if (depth > 0 && _mats[rayhit.hit.geomID]->scatter(
-                             raydir, hitpt, normal, scattered, attenuation)) {
+        if (depth > 0 &&
+            _mats[rayhit.hit.geomID]->scatter(rayhit, scattered, attenuation)) {
+            auto hitpt = get_hitpt(rayhit);
             auto secondary = make_rayhit(hitpt, scattered, 0.0001f);
             Eigen::Array3f traced;
             auto num_bounces =
