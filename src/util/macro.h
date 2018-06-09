@@ -2,9 +2,6 @@
 
 #include <iostream>
 
-namespace yart
-{
-
 // Assertions are automatically turned off on release build.
 #ifndef NDEBUG
 #include <cassert>
@@ -31,5 +28,3 @@ namespace yart
 #else // #ifndef YART_NO_WARNING
 #define YWARNING(msg) void(0);
 #endif // #ifndef YART_NO_WARNING
-
-} // namespace yart

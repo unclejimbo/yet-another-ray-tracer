@@ -5,7 +5,7 @@
 #include <yart/core/camera.h>
 #include <random>
 #include <algorithm>
-#include "../util/assert.h"
+#include "../util/macro.h"
 #include "../util/rayhit.h"
 
 namespace yart

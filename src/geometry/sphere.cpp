@@ -1,7 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <yart/geometry/sphere.h>
 #include <cmath>
-#include "../util/assert.h"
+#include "../util/macro.h"
 #include "../util/rayhit.h"
 
 namespace yart

@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <yart/camera/perspective.h>
-#include "../util/assert.h"
+#include "../util/macro.h"
 #include "../util/random.h"
 #include "../util/rayhit.h"
 
