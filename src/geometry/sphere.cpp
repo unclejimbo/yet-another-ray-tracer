@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <yart/geometry/sphere.h>
 #include <cmath>
 #include "../util/assert.h"
@@ -52,16 +53,18 @@ static void _sphere_intersect(const RTCIntersectFunctionNArguments* args)
         rayhit->ray.tfar = t1;
     }
     if (rayhit->ray.tfar != old_tfar) {
-        rayhit->hit.u = 0.0f;
-        rayhit->hit.v = 0.0f;
         rayhit->hit.instID[0] = args->context->instID[0];
         rayhit->hit.geomID = id;
         rayhit->hit.primID = args->primID;
         Eigen::Vector3f hitpt = rayorg + rayhit->ray.tfar * raydir;
-        Eigen::Vector3f ng = hitpt - center;
+        Eigen::Vector3f ng = (hitpt - center).normalized();
         rayhit->hit.Ng_x = ng(0);
         rayhit->hit.Ng_y = ng(1);
         rayhit->hit.Ng_z = ng(2);
+        auto phi = std::atan2(ng(0), ng(2));
+        auto theta = std::asin(ng(1));
+        rayhit->hit.u = 1.0f - (phi + M_PI) / (M_PI * 2.0f);
+        rayhit->hit.v = (theta + M_PI_2) / M_PI;
     }
 }
 

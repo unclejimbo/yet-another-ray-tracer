@@ -11,8 +11,14 @@ target_compile_options(yart-example PRIVATE
         $<$<CONFIG:Debug>:/Od /Wall /Zi>>
 )
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/common.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/common.h
+)
+
 target_include_directories(yart-example PRIVATE
     ${CMAKE_SOURCE_DIR}/3rdparty/
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(yart-example PRIVATE

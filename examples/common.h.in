@@ -1,0 +1,4 @@
+#pragma once
+
+#define YART_EXAMPLE_IMG_DIR "${CMAKE_SOURCE_DIR}/imgs/"
+#define YART_EXAMPLE_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/outputs/"
