@@ -5,7 +5,7 @@
 #include <yart/material/metal.h>
 #include <yart/material/dielectric.h>
 #include <yart/texture/constant.h>
-#include <yart/texture/checkboard.h>
+#include <yart/texture/checkerboard.h>
 #include <yart/texture/image.h>
 #include <yart/camera/perspective.h>
 #include <array>
@@ -120,6 +120,8 @@ void gen_scene_rttnw(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
         std::make_unique<yart::ConstantTexture>(0.2f, 0.3f, 0.1f));
     textures.push_back(
         std::make_unique<yart::ConstantTexture>(0.9f, 0.9f, 0.9f));
+    textures.push_back(std::make_unique<yart::CheckerBoardTexture>(
+        textures[0].get(), textures[1].get()));
     materials.push_back(
         std::make_unique<yart::Lambertian>(textures.back().get()));
 

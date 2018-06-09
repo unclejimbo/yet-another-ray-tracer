@@ -1,12 +1,12 @@
-#include <yart/texture/checkboard.h>
+#include <yart/texture/checkerboard.h>
 #include <cmath>
 
 namespace yart
 {
 
-Eigen::Array3f CheckBoardTexture::value(float u,
-                                        float v,
-                                        const Eigen::Vector3f& p) const
+Eigen::Array3f CheckerBoardTexture::value(float u,
+                                          float v,
+                                          const Eigen::Vector3f& p) const
 {
     auto sines = std::sin(10.0f * p.x()) * std::sin(10.0f * p.y()) *
                  std::sin(10.0f * p.z());
