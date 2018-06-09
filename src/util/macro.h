@@ -28,3 +28,8 @@
 #else // #ifndef YART_NO_WARNING
 #define YWARNING(msg) void(0);
 #endif // #ifndef YART_NO_WARNING
+
+#define YUNUSED(expr)                                                          \
+    do {                                                                       \
+        (void)(expr);                                                          \
+    } while (0)

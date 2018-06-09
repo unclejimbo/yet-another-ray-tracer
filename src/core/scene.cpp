@@ -30,11 +30,11 @@ void Scene::add(Geometry& geom, Material& mat)
 
 unsigned Scene::render(const Camera& camera,
                        unsigned char* pixels,
-                       unsigned width,
-                       unsigned height,
-                       unsigned samples,
+                       int width,
+                       int height,
+                       int samples,
                        bool interleaved,
-                       unsigned depth)
+                       int depth)
 {
     if (_need_commit) {
         rtcCommitScene(_raw);

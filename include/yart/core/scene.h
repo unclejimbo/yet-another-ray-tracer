@@ -22,11 +22,11 @@ public:
     void add(Geometry& geom, Material& mat);
     unsigned render(const Camera& camera,
                     unsigned char* pixels,
-                    unsigned width,
-                    unsigned height,
-                    unsigned samples = 1,
+                    int width,
+                    int height,
+                    int samples = 1,
                     bool interleaved = false,
-                    unsigned depth = 10);
+                    int depth = 10);
 
 private:
     unsigned _path_tracing(RTCIntersectContext& context,
