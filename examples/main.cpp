@@ -5,6 +5,7 @@
 #include <yart/material/metal.h>
 #include <yart/material/dielectric.h>
 #include <yart/texture/constant.h>
+#include <yart/texture/checkboard.h>
 #include <yart/camera/perspective.h>
 #include <array>
 #include <chrono>
@@ -32,7 +33,11 @@ void gen_rand_scene(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
     geometries.push_back(std::make_unique<yart::Sphere>(
         device, 1000.0f, Eigen::Vector3f(0.0f, -1000.0f, 0.0f)));
     textures.push_back(
-        std::make_unique<yart::ConstantTexture>(0.5f, 0.5f, 0.5f));
+        std::make_unique<yart::ConstantTexture>(0.2f, 0.3f, 0.1f));
+    textures.push_back(
+        std::make_unique<yart::ConstantTexture>(0.9f, 0.9f, 0.9f));
+    textures.push_back(std::make_unique<yart::CheckBoardTexture>(
+        textures[0].get(), textures[1].get()));
     materials.push_back(
         std::make_unique<yart::Lambertian>(textures.back().get()));
 

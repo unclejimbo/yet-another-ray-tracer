@@ -12,6 +12,7 @@ add_library(yart
     "${CMAKE_CURRENT_SOURCE_DIR}/material/lambertian.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/material/metal.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/material/dielectric.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/texture/checkboard.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/texture/constant.cpp"
 )
 add_library(yart::yart ALIAS yart)
