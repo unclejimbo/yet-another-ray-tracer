@@ -5,8 +5,6 @@
 #include <yart/material/metal.h>
 #include <yart/material/dielectric.h>
 #include <yart/texture/constant.h>
-#include <yart/texture/checkerboard.h>
-#include <yart/texture/image.h>
 #include <yart/camera/perspective.h>
 #include <array>
 #include <chrono>
@@ -16,9 +14,6 @@
 #include <string>
 #include <common.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
@@ -27,22 +22,7 @@ constexpr const unsigned g_height = 800;
 constexpr const unsigned g_samples = 100;
 constexpr const unsigned g_depth = 50;
 
-class Image
-{
-public:
-    Image(const std::string& filename)
-    {
-        pixels = stbi_load(filename.c_str(), &width, &height, nullptr, 0);
-    }
-    ~Image() { stbi_image_free(pixels); }
-
-public:
-    unsigned char* pixels;
-    int width;
-    int height;
-};
-
-// ray tracing in one week scene
+// ray tracing in one weekend scene
 void gen_scene_rtiow(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
                      std::vector<std::unique_ptr<yart::Material>>& materials,
                      std::vector<std::unique_ptr<yart::Texture>>& textures,
@@ -107,36 +87,6 @@ void gen_scene_rtiow(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
     materials.push_back(std::make_unique<yart::Metal>(0.7f, 0.6f, 0.5f, 0.0f));
 }
 
-// ray tracing the next week scene
-void gen_scene_rttnw(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
-                     std::vector<std::unique_ptr<yart::Material>>& materials,
-                     std::vector<std::unique_ptr<yart::Texture>>& textures,
-                     std::vector<Image>& images,
-                     const yart::Device& device)
-{
-    geometries.push_back(std::make_unique<yart::Sphere>(
-        device, 1000.0f, Eigen::Vector3f(0.0f, -1000.0f, 0.0f)));
-    textures.push_back(
-        std::make_unique<yart::ConstantTexture>(0.2f, 0.3f, 0.1f));
-    textures.push_back(
-        std::make_unique<yart::ConstantTexture>(0.9f, 0.9f, 0.9f));
-    textures.push_back(std::make_unique<yart::CheckerBoardTexture>(
-        textures[0].get(), textures[1].get()));
-    materials.push_back(
-        std::make_unique<yart::Lambertian>(textures.back().get()));
-
-    geometries.push_back(std::make_unique<yart::Sphere>(
-        device, 1.0f, Eigen::Vector3f(0.0f, 1.0f, 0.0f)));
-    std::string file(YART_EXAMPLE_IMG_DIR);
-    file.append("earthmap1k.jpg");
-    images.emplace_back(file);
-    textures.push_back(std::make_unique<yart::ImageTexture>(
-        images[0].pixels, images[0].width, images[0].height));
-    materials.push_back(
-        std::make_unique<yart::Lambertian>(textures.back().get()));
-    materials.push_back(std::make_unique<yart::Dielectric>(1.5f));
-}
-
 int main(int argc, char* argv[])
 {
     auto device = yart::Device();
@@ -144,13 +94,7 @@ int main(int argc, char* argv[])
     std::vector<std::unique_ptr<yart::Geometry>> geometries;
     std::vector<std::unique_ptr<yart::Material>> materials;
     std::vector<std::unique_ptr<yart::Texture>> textures;
-    std::vector<Image> images;
-    if (argc > 1 && std::string(argv[1]) == "ray_tracing_the_next_week") {
-        gen_scene_rttnw(geometries, materials, textures, images, device);
-    }
-    else {
-        gen_scene_rtiow(geometries, materials, textures, device);
-    }
+    gen_scene_rtiow(geometries, materials, textures, device);
 
     auto scene = yart::Scene(device);
     for (size_t i = 0; i < geometries.size(); ++i) {
@@ -178,7 +122,7 @@ int main(int argc, char* argv[])
     std::cout << "Mrays/sec: " << mrays << std::endl;
 
     std::string out_file(YART_EXAMPLE_OUTPUT_DIR);
-    out_file.append("out.png");
+    out_file.append("rttiw.png");
     stbi_write_png(out_file.c_str(),
                    g_width,
                    g_height,
