@@ -22,15 +22,26 @@ constexpr const unsigned g_height = 800;
 constexpr const unsigned g_samples = 100;
 constexpr const unsigned g_depth = 50;
 
-// ray tracing in one weekend scene
-void gen_scene_rtiow(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
+// ray tracing in one weekend
+void gen_scene_rtiow(const yart::Device& device,
+                     std::unique_ptr<yart::Camera>& camera,
+                     std::vector<std::unique_ptr<yart::Geometry>>& geometries,
                      std::vector<std::unique_ptr<yart::Material>>& materials,
-                     std::vector<std::unique_ptr<yart::Texture>>& textures,
-                     const yart::Device& device)
+                     std::vector<std::unique_ptr<yart::Texture>>& textures)
 {
     std::random_device rd;
     std::minstd_rand rd_gen(rd());
     std::uniform_real_distribution<> rd_number(0.0f, 1.0f);
+
+    camera = std::make_unique<yart::PerspectiveCamera>(
+        Eigen::Vector3f(13.0f, 2.0f, 3.0f),
+        Eigen::Vector3f(0.0f, 0.0f, 0.0f),
+        Eigen::Vector3f(0.0f, 1.0f, 0.0f),
+        0.01f,
+        20.0f,
+        g_width,
+        g_height);
+    camera->zoom(10.0f);
 
     geometries.push_back(std::make_unique<yart::Sphere>(
         device, 1000.0f, Eigen::Vector3f(0.0f, -1000.0f, 0.0f)));
@@ -87,33 +98,33 @@ void gen_scene_rtiow(std::vector<std::unique_ptr<yart::Geometry>>& geometries,
     materials.push_back(std::make_unique<yart::Metal>(0.7f, 0.6f, 0.5f, 0.0f));
 }
 
+void gen_scene_cornell_box(
+    const yart::Device& device,
+    std::unique_ptr<yart::Camera>& camera,
+    std::vector<std::unique_ptr<yart::Geometry>>& geometries,
+    std::vector<std::unique_ptr<yart::Material>>& materials,
+    std::vector<std::unique_ptr<yart::Texture>>& textures)
+{}
+
 int main(int argc, char* argv[])
 {
     auto device = yart::Device();
 
+    std::unique_ptr<yart::Camera> camera;
     std::vector<std::unique_ptr<yart::Geometry>> geometries;
     std::vector<std::unique_ptr<yart::Material>> materials;
     std::vector<std::unique_ptr<yart::Texture>> textures;
-    gen_scene_rtiow(geometries, materials, textures, device);
+    gen_scene_rtiow(device, camera, geometries, materials, textures);
 
     auto scene = yart::Scene(device);
     for (size_t i = 0; i < geometries.size(); ++i) {
         scene.add(*geometries[i], *materials[i]);
     }
 
-    yart::PerspectiveCamera camera(Eigen::Vector3f(13.0f, 2.0f, 3.0f),
-                                   Eigen::Vector3f(0.0f, 0.0f, 0.0f),
-                                   Eigen::Vector3f(0.0f, 1.0f, 0.0f),
-                                   0.01f,
-                                   20.0f,
-                                   g_width,
-                                   g_height);
-    camera.zoom(10.0f);
-
     std::vector<unsigned char> pixels(g_width * g_height * 3);
     auto tstart = std::chrono::high_resolution_clock::now();
     auto num_rays = scene.render(
-        camera, pixels.data(), g_width, g_height, g_samples, true, g_depth);
+        *camera, pixels.data(), g_width, g_height, g_samples, true, g_depth);
     auto tend = std::chrono::high_resolution_clock::now();
     auto tspent =
         std::chrono::duration_cast<std::chrono::milliseconds>(tend - tstart);
