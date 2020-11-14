@@ -3,15 +3,16 @@ find_package(Embree 3.0 REQUIRED)
 find_package(OpenMP)
 
 add_library(yart
+    "${CMAKE_CURRENT_SOURCE_DIR}/camera/perspective.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/camera.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/device.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/geometry.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/core/scene.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/camera/perspective.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/geometry/sphere.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/material/dielectric.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/material/diffuse_light.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/material/lambertian.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/material/metal.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/material/dielectric.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/texture/checkerboard.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/texture/constant.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/texture/image.cpp"

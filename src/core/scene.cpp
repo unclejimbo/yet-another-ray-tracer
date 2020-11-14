@@ -105,6 +105,8 @@ unsigned Scene::_path_tracing(RTCIntersectContext& context,
         // return color;
 
         Eigen::Vector3f scattered;
+        Eigen::Vector3f emitted = _mats[rayhit.hit.geomID]->emitted(
+            rayhit.hit.u, rayhit.hit.v, get_hitpt(rayhit));
         Eigen::Array3f attenuation;
         if (depth > 0 &&
             _mats[rayhit.hit.geomID]->scatter(rayhit, scattered, attenuation)) {
@@ -113,19 +115,16 @@ unsigned Scene::_path_tracing(RTCIntersectContext& context,
             Eigen::Array3f traced;
             auto num_bounces =
                 _path_tracing(context, secondary, traced, depth - 1);
-            irradiance = attenuation * traced;
+            irradiance = emitted.array() + attenuation * traced;
             return 1 + num_bounces;
         }
         else {
-            irradiance = Eigen::Vector3f::Zero();
+            irradiance = emitted;
             return 1;
         }
     }
     else { // background
-        auto raydir = get_raydir(rayhit).normalized();
-        float t = 0.5f * (raydir(1) + 1.0f);
-        irradiance = (1.0f - t) * Eigen::Vector3f::Ones() +
-                     t * Eigen::Vector3f(0.5f, 0.7f, 1.0f);
+        irradiance.setZero();
         return 1;
     }
 }
