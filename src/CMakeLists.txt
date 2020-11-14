@@ -3,19 +3,38 @@ find_package(Embree 3.0 REQUIRED)
 find_package(OpenMP)
 
 add_library(yart
-    "${CMAKE_CURRENT_SOURCE_DIR}/camera/perspective.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/core/camera.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/core/device.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/core/geometry.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/core/scene.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/geometry/sphere.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/material/dielectric.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/material/diffuse_light.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/material/lambertian.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/material/metal.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/texture/checkerboard.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/texture/constant.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/texture/image.cpp"
+    ${PROJECT_SOURCE_DIR}/include/yart/camera/perspective.h
+    ${PROJECT_SOURCE_DIR}/include/yart/core/camera.h
+    ${PROJECT_SOURCE_DIR}/include/yart/core/device.h
+    ${PROJECT_SOURCE_DIR}/include/yart/core/geometry.h
+    ${PROJECT_SOURCE_DIR}/include/yart/core/material.h
+    ${PROJECT_SOURCE_DIR}/include/yart/core/scene.h
+    ${PROJECT_SOURCE_DIR}/include/yart/core/texture.h
+    ${PROJECT_SOURCE_DIR}/include/yart/geometry/sphere.h
+    ${PROJECT_SOURCE_DIR}/include/yart/material/dielectric.h
+    ${PROJECT_SOURCE_DIR}/include/yart/material/diffuse_light.h
+    ${PROJECT_SOURCE_DIR}/include/yart/material/lambertian.h
+    ${PROJECT_SOURCE_DIR}/include/yart/material/metal.h
+    ${PROJECT_SOURCE_DIR}/include/yart/texture/checkerboard.h
+    ${PROJECT_SOURCE_DIR}/include/yart/texture/constant.h
+    ${PROJECT_SOURCE_DIR}/include/yart/texture/image.h
+
+    ${PROJECT_SOURCE_DIR}/src/camera/perspective.cpp
+    ${PROJECT_SOURCE_DIR}/src/core/camera.cpp
+    ${PROJECT_SOURCE_DIR}/src/core/device.cpp
+    ${PROJECT_SOURCE_DIR}/src/core/geometry.cpp
+    ${PROJECT_SOURCE_DIR}/src/core/scene.cpp
+    ${PROJECT_SOURCE_DIR}/src/geometry/sphere.cpp
+    ${PROJECT_SOURCE_DIR}/src/material/dielectric.cpp
+    ${PROJECT_SOURCE_DIR}/src/material/diffuse_light.cpp
+    ${PROJECT_SOURCE_DIR}/src/material/lambertian.cpp
+    ${PROJECT_SOURCE_DIR}/src/material/metal.cpp
+    ${PROJECT_SOURCE_DIR}/src/texture/checkerboard.cpp
+    ${PROJECT_SOURCE_DIR}/src/texture/constant.cpp
+    ${PROJECT_SOURCE_DIR}/src/texture/image.cpp
+    ${PROJECT_SOURCE_DIR}/src/util/macro.h
+    ${PROJECT_SOURCE_DIR}/src/util/random.h
+    ${PROJECT_SOURCE_DIR}/src/util/rayhit.h
 )
 add_library(yart::yart ALIAS yart)
 
