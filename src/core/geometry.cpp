@@ -6,7 +6,7 @@ namespace yart
 
 Geometry::Geometry(const Device& device, RTCGeometryType type)
 {
-    _raw = rtcNewGeometry(device._raw, type);
+    _raw = rtcNewGeometry(device.raw(), type);
 }
 
 Geometry::~Geometry()

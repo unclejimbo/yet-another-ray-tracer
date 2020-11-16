@@ -8,12 +8,10 @@ namespace yart
 
 class YART_API Device
 {
-    friend class Geometry;
-    friend class Scene;
-
 public:
     Device();
     ~Device();
+    RTCDevice raw() const { return _raw; }
 
 private:
     RTCDevice _raw;

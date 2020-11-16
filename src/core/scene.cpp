@@ -13,7 +13,7 @@ namespace yart
 
 Scene::Scene(const Device& device) : _need_commit(true)
 {
-    _raw = rtcNewScene(device._raw);
+    _raw = rtcNewScene(device.raw());
     _bg.setZero();
 }
 
@@ -24,7 +24,7 @@ Scene::~Scene()
 
 void Scene::add(Geometry& geom, Material& mat)
 {
-    rtcAttachGeometry(_raw, geom._raw);
+    rtcAttachGeometry(_raw, geom.raw());
     _mats.push_back(&mat);
     _need_commit = true;
 }

@@ -11,11 +11,10 @@ class Device;
 
 class YART_API Geometry
 {
-    friend class Scene;
-
 public:
     Geometry(const Device& device, RTCGeometryType type);
     ~Geometry();
+    RTCGeometry raw() const { return _raw; }
 
 protected:
     RTCGeometry _raw;

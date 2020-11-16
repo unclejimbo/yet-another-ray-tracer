@@ -15,10 +15,10 @@ class Camera;
 
 class YART_API Scene
 {
-
 public:
     explicit Scene(const Device& device);
     ~Scene();
+    RTCScene raw() const { return _raw; }
     void add(Geometry& geom, Material& mat);
     unsigned render(const Camera& camera,
                     unsigned char* pixels,
