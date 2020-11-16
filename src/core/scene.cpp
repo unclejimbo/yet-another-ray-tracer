@@ -14,6 +14,7 @@ namespace yart
 Scene::Scene(const Device& device) : _need_commit(true)
 {
     _raw = rtcNewScene(device._raw);
+    _bg.setZero();
 }
 
 Scene::~Scene()
@@ -102,7 +103,8 @@ unsigned Scene::_path_tracing(RTCIntersectContext& context,
         //     rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z);
         // color += Eigen::Vector3f::Ones();
         // color *= 0.5f;
-        // return color;
+        // irradiance = color;
+        // return 0;
 
         Eigen::Vector3f scattered;
         Eigen::Vector3f emitted = _mats[rayhit.hit.geomID]->emitted(
@@ -124,7 +126,7 @@ unsigned Scene::_path_tracing(RTCIntersectContext& context,
         }
     }
     else { // background
-        irradiance.setZero();
+        irradiance = _bg;
         return 1;
     }
 }

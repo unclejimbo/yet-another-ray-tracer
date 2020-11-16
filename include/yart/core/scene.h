@@ -27,6 +27,8 @@ public:
                     int samples = 1,
                     bool interleaved = false,
                     int depth = 10);
+    Eigen::Vector3f background() const { return _bg; }
+    void set_background(const Eigen::Vector3f& bg) { _bg = bg; }
 
 private:
     unsigned _path_tracing(RTCIntersectContext& context,
@@ -38,6 +40,7 @@ private:
     RTCScene _raw;
     bool _need_commit;
     std::vector<Material*> _mats;
+    Eigen::Vector3f _bg;
 };
 
 } // namespace yart
