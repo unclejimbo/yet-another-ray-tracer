@@ -11,7 +11,7 @@
 namespace yart
 {
 
-Scene::Scene(const Device& device) : _need_commit(true)
+Scene::Scene(const Device& device)
 {
     _raw = rtcNewScene(device.raw());
     _bg.setZero();
@@ -26,7 +26,11 @@ void Scene::add(Geometry& geom, Material& mat)
 {
     rtcAttachGeometry(_raw, geom.raw());
     _mats.push_back(&mat);
-    _need_commit = true;
+}
+
+void Scene::commit()
+{
+    rtcCommitScene(_raw);
 }
 
 unsigned Scene::render(const Camera& camera,
@@ -37,11 +41,6 @@ unsigned Scene::render(const Camera& camera,
                        bool interleaved,
                        int depth)
 {
-    if (_need_commit) {
-        rtcCommitScene(_raw);
-        _need_commit = false;
-    }
-
     RTCIntersectContext context;
     rtcInitIntersectContext(&context);
 

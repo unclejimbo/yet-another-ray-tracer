@@ -20,6 +20,7 @@ public:
     ~Scene();
     RTCScene raw() const { return _raw; }
     void add(Geometry& geom, Material& mat);
+    void commit();
     unsigned render(const Camera& camera,
                     unsigned char* pixels,
                     int width,
@@ -38,7 +39,6 @@ private:
 
 private:
     RTCScene _raw;
-    bool _need_commit;
     std::vector<Material*> _mats;
     Eigen::Vector3f _bg;
 };
