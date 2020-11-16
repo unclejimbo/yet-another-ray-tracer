@@ -1,6 +1,7 @@
 #include <yart/camera/perspective.h>
 #include <yart/core/device.h>
 #include <yart/core/scene.h>
+#include <yart/geometry/box.h>
 #include <yart/geometry/plane.h>
 #include <yart/geometry/sphere.h>
 #include <yart/material/dielectric.h>
@@ -150,6 +151,14 @@ void gen_scene_cornell_box(
                                       Eigen::Vector3f(0, 0, 555),
                                       Eigen::Vector3f(0, 555, 0))); // right
     geometries.push_back(
+        std::make_unique<yart::Box>(device,
+                                    Eigen::Vector3f(130, 0, -230),
+                                    Eigen::Vector3f(295, 165, -65))); // box1
+    geometries.push_back(
+        std::make_unique<yart::Box>(device,
+                                    Eigen::Vector3f(265, 0, -460),
+                                    Eigen::Vector3f(430, 330, -295))); // box2
+    geometries.push_back(
         std::make_unique<yart::Plane>(device,
                                       Eigen::Vector3f(213, 554, -227),
                                       Eigen::Vector3f(130, 0, 0),
@@ -174,6 +183,8 @@ void gen_scene_cornell_box(
     scene.add(*geometries[2], *materials[0]);
     scene.add(*geometries[3], *materials[1]);
     scene.add(*geometries[4], *materials[2]);
+    scene.add(*geometries[5], *materials[0]);
+    scene.add(*geometries[6], *materials[0]);
     scene.add(*geometries.back(), *materials.back());
 }
 
