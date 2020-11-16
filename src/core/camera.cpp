@@ -1,4 +1,5 @@
 #include <yart/core/camera.h>
+#include <Eigen/Geometry>
 
 namespace yart
 {

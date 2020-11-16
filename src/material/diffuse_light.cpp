@@ -3,9 +3,9 @@
 namespace yart
 {
 
-bool DiffuseLight::scatter(const RTCRayHit& rayhit,
-                           Eigen::Vector3f& rayout,
-                           Eigen::Array3f& attenuation) const
+bool DiffuseLight::scatter(const RTCRayHit&,
+                           Eigen::Vector3f&,
+                           Eigen::Array3f&) const
 {
     return false;
 }

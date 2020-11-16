@@ -24,6 +24,7 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/src/core/camera.cpp
     ${PROJECT_SOURCE_DIR}/src/core/device.cpp
     ${PROJECT_SOURCE_DIR}/src/core/geometry.cpp
+    ${PROJECT_SOURCE_DIR}/src/core/material.cpp
     ${PROJECT_SOURCE_DIR}/src/core/scene.cpp
     ${PROJECT_SOURCE_DIR}/src/geometry/plane.cpp
     ${PROJECT_SOURCE_DIR}/src/geometry/sphere.cpp

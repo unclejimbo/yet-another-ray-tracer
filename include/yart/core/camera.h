@@ -2,7 +2,7 @@
 
 #include <yart/core/common.h>
 #include <embree3/rtcore.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <limits>
 
 namespace yart

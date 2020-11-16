@@ -1,7 +1,7 @@
 #pragma once
 
 #include <embree3/rtcore.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <limits>
 #include <cmath>
 #include <optional>

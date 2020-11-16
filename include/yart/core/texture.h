@@ -1,7 +1,7 @@
 #pragma once
 
 #include <yart/core/common.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 namespace yart
 {

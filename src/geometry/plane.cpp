@@ -1,6 +1,7 @@
 #include <yart/geometry/plane.h>
 #include "../util/macro.h"
 #include "../util/rayhit.h"
+#include <Eigen/Geometry>
 
 namespace yart
 {

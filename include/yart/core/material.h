@@ -2,7 +2,7 @@
 
 #include <yart/core/common.h>
 #include <embree3/rtcore.h>
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 namespace yart
 {
@@ -16,10 +16,7 @@ public:
                          Eigen::Array3f& attenuation) const = 0;
     virtual Eigen::Vector3f emitted(float u,
                                     float v,
-                                    const Eigen::Vector3f& p) const
-    {
-        return Eigen::Vector3f::Zero();
-    }
+                                    const Eigen::Vector3f& p) const;
 };
 
 } // namespace yart
