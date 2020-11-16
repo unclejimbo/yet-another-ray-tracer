@@ -9,6 +9,14 @@ namespace yart
 
 class Device;
 
+class YART_API GeometryData
+{
+public:
+    virtual ~GeometryData() = default;
+    virtual void bounds(const RTCBoundsFunctionArguments* args) = 0;
+    virtual void intersect(const RTCIntersectFunctionNArguments* args) = 0;
+};
+
 class YART_API Geometry
 {
 public:
@@ -18,6 +26,7 @@ public:
 
 protected:
     RTCGeometry _raw;
+    std::unique_ptr<GeometryData> _data;
 };
 
 } // namespace yart

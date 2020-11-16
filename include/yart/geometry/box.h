@@ -6,12 +6,8 @@
 namespace yart
 {
 
-class YART_API BoxData
+class YART_API BoxData : public GeometryData
 {
-public:
-    static void bounds(const RTCBoundsFunctionArguments* args);
-    static void intersect(const RTCIntersectFunctionNArguments* args);
-
 public:
     BoxData() = default;
     BoxData(const Eigen::Vector3f& min_corner,
@@ -30,6 +26,8 @@ public:
     {
         return Eigen::Vector3f(0.0f, 0.0f, _p1(2) - _p0(2));
     }
+    void bounds(const RTCBoundsFunctionArguments* args) override;
+    void intersect(const RTCIntersectFunctionNArguments* args) override;
 
 private:
     Eigen::Vector3f _p0;
@@ -42,9 +40,6 @@ public:
     Box(const Device& device,
         const Eigen::Vector3f& min_corner,
         const Eigen::Vector3f& max_corner);
-
-private:
-    BoxData _data;
 };
 
 } // namespace yart

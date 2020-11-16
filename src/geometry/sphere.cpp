@@ -7,18 +7,31 @@
 namespace yart
 {
 
+static void bounds(const RTCBoundsFunctionArguments* args)
+{
+    auto data = reinterpret_cast<SphereData*>(args->geometryUserPtr);
+    data->bounds(args);
+}
+
+static void intersect(const RTCIntersectFunctionNArguments* args)
+{
+    auto data = reinterpret_cast<SphereData*>(args->geometryUserPtr);
+    data->intersect(args);
+}
+
+SphereData::SphereData(float radius, const Eigen::Vector3f& center)
+    : _radius(radius), _center(center)
+{}
+
 void SphereData::bounds(const RTCBoundsFunctionArguments* args)
 {
     auto bounds_o = args->bounds_o;
-    auto sphere = reinterpret_cast<SphereData*>(args->geometryUserPtr);
-    auto center = sphere->center();
-    auto radius = sphere->radius();
-    bounds_o->lower_x = center(0) - radius;
-    bounds_o->lower_y = center(1) - radius;
-    bounds_o->lower_z = center(2) - radius;
-    bounds_o->upper_x = center(0) + radius;
-    bounds_o->upper_y = center(1) + radius;
-    bounds_o->upper_z = center(2) + radius;
+    bounds_o->lower_x = _center(0) - _radius;
+    bounds_o->lower_y = _center(1) - _radius;
+    bounds_o->lower_z = _center(2) - _radius;
+    bounds_o->upper_x = _center(0) + _radius;
+    bounds_o->upper_y = _center(1) + _radius;
+    bounds_o->upper_z = _center(2) + _radius;
 }
 
 void SphereData::intersect(const RTCIntersectFunctionNArguments* args)
@@ -29,14 +42,11 @@ void SphereData::intersect(const RTCIntersectFunctionNArguments* args)
     auto rayorg = get_rayorg(*rayhit);
     auto raydir = get_raydir(*rayhit);
 
-    auto sphere = reinterpret_cast<SphereData*>(args->geometryUserPtr);
-    auto center = sphere->center();
-    auto oc = rayorg - center;
-    auto radius = sphere->radius();
+    auto oc = rayorg - _center;
 
     auto a = raydir.dot(raydir);
     auto b = 2.0f * oc.dot(raydir);
-    auto c = oc.dot(oc) - radius * radius;
+    auto c = oc.dot(oc) - _radius * _radius;
     auto d = b * b - 4.0f * a * c;
     if (d < 0.0f) return; // no hit
     auto q = std::sqrt(d);
@@ -56,7 +66,7 @@ void SphereData::intersect(const RTCIntersectFunctionNArguments* args)
         rayhit->hit.geomID = args->geomID;
         rayhit->hit.primID = args->primID;
         Eigen::Vector3f hitpt = rayorg + rayhit->ray.tfar * raydir;
-        Eigen::Vector3f ng = (hitpt - center).normalized();
+        Eigen::Vector3f ng = (hitpt - _center).normalized();
         rayhit->hit.Ng_x = ng(0);
         rayhit->hit.Ng_y = ng(1);
         rayhit->hit.Ng_z = ng(2);
@@ -67,19 +77,16 @@ void SphereData::intersect(const RTCIntersectFunctionNArguments* args)
     }
 }
 
-SphereData::SphereData(float radius, const Eigen::Vector3f& center)
-    : _radius(radius), _center(center)
-{}
-
 Sphere::Sphere(const Device& device,
                float radius,
                const Eigen::Vector3f& center)
-    : Geometry(device, RTC_GEOMETRY_TYPE_USER), _data(radius, center)
+    : Geometry(device, RTC_GEOMETRY_TYPE_USER)
 {
+    this->_data = std::make_unique<SphereData>(radius, center);
     rtcSetGeometryUserPrimitiveCount(this->_raw, 1);
-    rtcSetGeometryUserData(this->_raw, &_data);
-    rtcSetGeometryBoundsFunction(this->_raw, &SphereData::bounds, nullptr);
-    rtcSetGeometryIntersectFunction(this->_raw, &SphereData::intersect);
+    rtcSetGeometryUserData(this->_raw, _data.get());
+    rtcSetGeometryBoundsFunction(this->_raw, &bounds, nullptr);
+    rtcSetGeometryIntersectFunction(this->_raw, &intersect);
     rtcCommitGeometry(this->_raw);
 }
 

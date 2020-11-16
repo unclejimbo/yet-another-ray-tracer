@@ -6,11 +6,8 @@
 namespace yart
 {
 
-class YART_API PlaneData
+class YART_API PlaneData : public GeometryData
 {
-public:
-    static void bounds(const RTCBoundsFunctionArguments* args);
-    static void intersect(const RTCIntersectFunctionNArguments* args);
 
 public:
     PlaneData() = default;
@@ -25,6 +22,8 @@ public:
     Eigen::Vector3f n() const { return _n; }
     float ulen() const { return _u.norm(); }
     float vlen() const { return _v.norm(); }
+    void bounds(const RTCBoundsFunctionArguments* args) override;
+    void intersect(const RTCIntersectFunctionNArguments* args) override;
 
 private:
     Eigen::Vector3f _corner;
@@ -40,9 +39,6 @@ public:
           const Eigen::Vector3f& corner,
           const Eigen::Vector3f& u,
           const Eigen::Vector3f& v);
-
-private:
-    PlaneData _data;
 };
 
 } // namespace yart
