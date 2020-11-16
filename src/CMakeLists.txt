@@ -10,6 +10,7 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/include/yart/core/material.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/scene.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/texture.h
+    ${PROJECT_SOURCE_DIR}/include/yart/geometry/plane.h
     ${PROJECT_SOURCE_DIR}/include/yart/geometry/sphere.h
     ${PROJECT_SOURCE_DIR}/include/yart/material/dielectric.h
     ${PROJECT_SOURCE_DIR}/include/yart/material/diffuse_light.h
@@ -24,6 +25,7 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/src/core/device.cpp
     ${PROJECT_SOURCE_DIR}/src/core/geometry.cpp
     ${PROJECT_SOURCE_DIR}/src/core/scene.cpp
+    ${PROJECT_SOURCE_DIR}/src/geometry/plane.cpp
     ${PROJECT_SOURCE_DIR}/src/geometry/sphere.cpp
     ${PROJECT_SOURCE_DIR}/src/material/dielectric.cpp
     ${PROJECT_SOURCE_DIR}/src/material/diffuse_light.cpp
