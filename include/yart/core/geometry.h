@@ -2,6 +2,7 @@
 
 #include <yart/core/common.h>
 #include <embree3/rtcore.h>
+#include <memory>
 
 namespace yart
 {
@@ -15,11 +16,9 @@ class YART_API Geometry
 public:
     Geometry(const Device& device, RTCGeometryType type);
     ~Geometry();
-    unsigned id() const;
 
 protected:
     RTCGeometry _raw;
-    unsigned _id;
 };
 
 } // namespace yart

@@ -24,7 +24,7 @@ Scene::~Scene()
 
 void Scene::add(Geometry& geom, Material& mat)
 {
-    geom._id = rtcAttachGeometry(_raw, geom._raw);
+    rtcAttachGeometry(_raw, geom._raw);
     _mats.push_back(&mat);
     _need_commit = true;
 }

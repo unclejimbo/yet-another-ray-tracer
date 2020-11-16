@@ -14,9 +14,4 @@ Geometry::~Geometry()
     rtcReleaseGeometry(_raw);
 }
 
-unsigned Geometry::id() const
-{
-    return _id;
-}
-
 } // namespace yart
