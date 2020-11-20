@@ -33,6 +33,16 @@ inline Eigen::Vector3f get_hitnormal(const RTCRayHit& rayhit)
     return Eigen::Vector3f(rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z);
 }
 
+inline Eigen::Vector3f transform_hitnormal(
+    RTCRayHit& rayhit,
+    const Eigen::Matrix4f& model_to_world)
+{
+    Eigen::Vector3f n = get_hitnormal(rayhit);
+    n = model_to_world.topLeftCorner(3, 3).inverse().transpose() * n;
+    n.normalize();
+    return n;
+}
+
 inline RTCRayHit make_rayhit(const Eigen::Vector3f& rayorg,
                              const Eigen::Vector3f& raydir,
                              float tnear = 0.0f,

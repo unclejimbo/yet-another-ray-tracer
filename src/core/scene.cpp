@@ -3,6 +3,7 @@
 #include <yart/core/geometry.h>
 #include <yart/core/material.h>
 #include <yart/core/camera.h>
+#include <yart/geometry/instance.h>
 #include <random>
 #include <algorithm>
 #include "../util/macro.h"
@@ -25,6 +26,7 @@ Scene::~Scene()
 void Scene::add(Geometry& geom, Material& mat)
 {
     rtcAttachGeometry(_raw, geom.raw());
+    _geoms.push_back(&geom);
     _mats.push_back(&mat);
 }
 
@@ -49,7 +51,8 @@ unsigned Scene::render(const Camera& camera,
     std::uniform_real_distribution<> rd_number(0.0f, 1.0f);
 
     unsigned num_rays = 0;
-#pragma omp parallel for schedule(dynamic) reduction(+ : num_rays)
+    // FIXME: instancing breaks openmp
+    // #pragma omp parallel for schedule(dynamic) reduction(+ : num_rays)
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             Eigen::Array3f irradiance(0.0f, 0.0f, 0.0f);
@@ -95,23 +98,34 @@ unsigned Scene::_path_tracing(RTCIntersectContext& context,
                               Eigen::Array3f& irradiance,
                               unsigned depth)
 {
+    if (depth <= 0) { return 0; }
+
     rtcIntersect1(_raw, &context, &rayhit);
     if (rayhit.hit.geomID != RTC_INVALID_GEOMETRY_ID) {
+        if (rayhit.hit.instID[0] != RTC_INVALID_GEOMETRY_ID) {
+            rayhit.hit.geomID = rayhit.hit.instID[0];
+            auto instance =
+                reinterpret_cast<Instance*>(_geoms[rayhit.hit.geomID]);
+            Eigen::Vector3f normal =
+                transform_hitnormal(rayhit, instance->matrix());
+            rayhit.hit.Ng_x = normal(0);
+            rayhit.hit.Ng_y = normal(1);
+            rayhit.hit.Ng_z = normal(2);
+        }
+
         // // Debug: visualize normals
-        // Eigen::Vector3f color(
-        //     rayhit.hit.Ng_x, rayhit.hit.Ng_y, rayhit.hit.Ng_z);
+        // Eigen::Vector3f color = get_hitnormal(rayhit);
         // color += Eigen::Vector3f::Ones();
         // color *= 0.5f;
         // irradiance = color;
         // return 0;
 
-        Eigen::Vector3f scattered;
+        auto hitpt = get_hitpt(rayhit);
         Eigen::Vector3f emitted = _mats[rayhit.hit.geomID]->emitted(
-            rayhit.hit.u, rayhit.hit.v, get_hitpt(rayhit));
+            rayhit.hit.u, rayhit.hit.v, hitpt);
+        Eigen::Vector3f scattered;
         Eigen::Array3f attenuation;
-        if (depth > 0 &&
-            _mats[rayhit.hit.geomID]->scatter(rayhit, scattered, attenuation)) {
-            auto hitpt = get_hitpt(rayhit);
+        if (_mats[rayhit.hit.geomID]->scatter(rayhit, scattered, attenuation)) {
             auto secondary = make_rayhit(hitpt, scattered, 0.0001f);
             Eigen::Array3f traced;
             auto num_bounces =
