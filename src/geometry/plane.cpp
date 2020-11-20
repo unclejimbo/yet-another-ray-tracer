@@ -51,7 +51,7 @@ void PlaneData::intersect(const RTCIntersectFunctionNArguments* args)
 
     Eigen::Vector3f planeorg = this->corner();
     auto t = ((planeorg - rayorg).dot(normal)) / dn;
-    if (t > rayhit->ray.tfar && t < rayhit->ray.tnear) {
+    if (t > rayhit->ray.tfar || t < rayhit->ray.tnear) {
         return;
     } // out of range
 
