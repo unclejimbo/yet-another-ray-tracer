@@ -9,6 +9,7 @@
 #include <yart/material/diffuse_light.h>
 #include <yart/material/lambertian.h>
 #include <yart/material/metal.h>
+#include <yart/renderer/pathtracer.h>
 #include <yart/texture/constant.h>
 #include <chrono>
 #include <iostream>
@@ -114,6 +115,9 @@ void gen_scene_rtiow()
 
 void gen_scene_cornell_box()
 {
+    g_scenes.push_back(std::make_unique<yart::Scene>(g_device)); // main
+    g_scenes.push_back(std::make_unique<yart::Scene>(g_device)); // box
+
     g_camera = std::make_unique<yart::PerspectiveCamera>(
         Eigen::Vector3f(278, 278, 800),
         Eigen::Vector3f(278, 278, 0),
@@ -123,9 +127,7 @@ void gen_scene_cornell_box()
         g_width,
         g_height);
     g_camera->zoom(10.0f);
-
-    g_scenes.push_back(std::make_unique<yart::Scene>(g_device)); // main
-    g_scenes.push_back(std::make_unique<yart::Scene>(g_device)); // box
+    g_scenes[0]->set_camera(*g_camera);
 
     g_geometries.push_back(
         std::make_unique<yart::Plane>(g_device,
@@ -234,10 +236,18 @@ int main(int argc, char* argv[])
     }
 
     std::vector<unsigned char> pixels(g_width * g_height * 3);
+    yart::RenderData data;
+    data.pixels = pixels.data();
+    data.width = g_width;
+    data.height = g_height;
+    data.interleaved = true;
+
     auto tstart = std::chrono::high_resolution_clock::now();
+
     g_scenes[0]->commit();
-    auto num_rays = g_scenes[0]->render(
-        *g_camera, pixels.data(), g_width, g_height, g_samples, true, g_depth);
+    yart::PathTracer renderer(g_samples, g_depth);
+    auto num_rays = renderer.render_tiled(*g_scenes[0], data);
+
     auto tend = std::chrono::high_resolution_clock::now();
     auto tspent =
         std::chrono::duration_cast<std::chrono::milliseconds>(tend - tstart);

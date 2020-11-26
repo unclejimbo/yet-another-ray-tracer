@@ -8,6 +8,7 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/include/yart/core/device.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/geometry.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/material.h
+    ${PROJECT_SOURCE_DIR}/include/yart/core/renderer.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/scene.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/texture.h
     ${PROJECT_SOURCE_DIR}/include/yart/geometry/box.h
@@ -18,6 +19,7 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/include/yart/material/diffuse_light.h
     ${PROJECT_SOURCE_DIR}/include/yart/material/lambertian.h
     ${PROJECT_SOURCE_DIR}/include/yart/material/metal.h
+    ${PROJECT_SOURCE_DIR}/include/yart/renderer/pathtracer.h
     ${PROJECT_SOURCE_DIR}/include/yart/texture/checkerboard.h
     ${PROJECT_SOURCE_DIR}/include/yart/texture/constant.h
     ${PROJECT_SOURCE_DIR}/include/yart/texture/image.h
@@ -27,6 +29,7 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/src/core/device.cpp
     ${PROJECT_SOURCE_DIR}/src/core/geometry.cpp
     ${PROJECT_SOURCE_DIR}/src/core/material.cpp
+    ${PROJECT_SOURCE_DIR}/src/core/renderer.cpp
     ${PROJECT_SOURCE_DIR}/src/core/scene.cpp
     ${PROJECT_SOURCE_DIR}/src/geometry/box.cpp
     ${PROJECT_SOURCE_DIR}/src/geometry/instance.cpp
@@ -36,6 +39,7 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/src/material/diffuse_light.cpp
     ${PROJECT_SOURCE_DIR}/src/material/lambertian.cpp
     ${PROJECT_SOURCE_DIR}/src/material/metal.cpp
+    ${PROJECT_SOURCE_DIR}/src/renderer/pathtracer.cpp
     ${PROJECT_SOURCE_DIR}/src/texture/checkerboard.cpp
     ${PROJECT_SOURCE_DIR}/src/texture/constant.cpp
     ${PROJECT_SOURCE_DIR}/src/texture/image.cpp
