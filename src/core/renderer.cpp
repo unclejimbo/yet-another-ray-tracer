@@ -1,8 +1,8 @@
 #include <yart/core/renderer.h>
 #include <embree3/rtcore.h>
 #include <omp.h>
-#include <algorithm>
-#include <random>
+#include <iostream>
+#include <numeric>
 
 namespace yart
 {
@@ -13,10 +13,14 @@ int Renderer::render_tiled(const Scene& scene, RenderData& data)
     const int num_tiles_x = (data.width + TILE_SIZE - 1) / TILE_SIZE;
     const int num_tiles_y = (data.height + TILE_SIZE - 1) / TILE_SIZE;
     const int num_tasks = num_tiles_x * num_tiles_y;
+    int cnt = 0;
 #pragma omp parallel for schedule(dynamic)
     for (int i = 0; i < num_tasks; ++i) {
         int thread_id = omp_get_thread_num();
         _render_task_tiled(scene, data, i, thread_id, num_tiles_x);
+#pragma omp critical(cnt)
+        std::cout << "Render progress: " << ++cnt << "/" << num_tasks
+                  << std::endl;
     }
     return std::accumulate(_num_rays.begin(), _num_rays.end(), 0);
 }
