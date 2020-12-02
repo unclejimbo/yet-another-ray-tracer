@@ -1,7 +1,6 @@
 #include <yart/material/metal.h>
 #include <algorithm>
 #include "../util/rayhit.h"
-#include "../util/random.h"
 
 namespace yart
 {
@@ -24,7 +23,7 @@ bool Metal::scatter(const RTCRayHit& rayhit,
     auto rayin = get_raydir(rayhit);
     auto normal = get_hitnormal(rayhit);
     rayout = reflect(rayin, normal.normalized());
-    rayout = rayout + roughness * random_in_unit_sphere();
+    rayout = rayout + roughness * Material::_sampler.uniform_in_sphere();
     attenuation = albedo;
     return rayout.dot(normal) > 0.0f;
 }

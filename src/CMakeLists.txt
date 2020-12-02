@@ -46,7 +46,6 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/src/texture/constant.cpp
     ${PROJECT_SOURCE_DIR}/src/texture/image.cpp
     ${PROJECT_SOURCE_DIR}/src/util/macro.h
-    ${PROJECT_SOURCE_DIR}/src/util/random.h
     ${PROJECT_SOURCE_DIR}/src/util/rayhit.h
 )
 add_library(yart::yart ALIAS yart)

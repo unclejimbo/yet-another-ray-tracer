@@ -1,6 +1,5 @@
 #include <yart/material/dielectric.h>
 #include <cmath>
-#include <random>
 #include "../util/rayhit.h"
 
 namespace yart
@@ -37,10 +36,7 @@ bool Dielectric::scatter(const RTCRayHit& rayhit,
     auto refracted = refract(rayin, outward_normal.normalized(), ni_over_nt);
     if (refracted.has_value()) {
         reflect_prob = _schlick_fresnel(cosine, rindex);
-        std::random_device rd;
-        std::minstd_rand rd_gen(rd());
-        std::uniform_real_distribution<> rd_number(0.0f, 1.0f);
-        if (rd_number(rd_gen) < reflect_prob) { // fresnel
+        if (Material::_sampler.uniform_1d() < reflect_prob) { // fresnel
             rayout = reflect(rayin, normal.normalized());
         }
         else { // transmission

@@ -3,7 +3,6 @@
 #include <yart/core/material.h>
 #include <yart/core/scene.h>
 #include <yart/geometry/instance.h>
-#include <random>
 #include "../util/rayhit.h"
 
 namespace yart

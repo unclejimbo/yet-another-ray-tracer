@@ -1,6 +1,7 @@
 #pragma once
 
 #include <yart/core/common.h>
+#include <yart/core/sampler.h>
 #include <embree3/rtcore.h>
 #include <Eigen/Core>
 
@@ -17,6 +18,9 @@ public:
     virtual Eigen::Vector3f emitted(float u,
                                     float v,
                                     const Eigen::Vector3f& p) const;
+
+protected:
+    static Sampler _sampler;
 };
 
 } // namespace yart

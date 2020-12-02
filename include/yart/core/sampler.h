@@ -14,6 +14,7 @@ public:
     float uniform_1d(float* pdf = nullptr);
     Eigen::Vector2f uniform_2d(float* pdf = nullptr);
     Eigen::Vector2f uniform_in_disk(float* pdf = nullptr);
+    Eigen::Vector3f uniform_in_sphere(float* pdf = nullptr);
     Eigen::Vector3f uniform_on_sphere(float* pdf = nullptr);
     Eigen::Vector3f uniform_on_hemisphere(float* pdf = nullptr);
     Eigen::Vector3f cosine_weighted_on_hemisphere(float* pdf = nullptr);
