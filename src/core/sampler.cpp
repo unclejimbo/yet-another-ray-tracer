@@ -31,7 +31,7 @@ Eigen::Vector2f Sampler::uniform_in_disk(float* pdf)
 
 Eigen::Vector3f Sampler::uniform_in_sphere(float* pdf)
 {
-    if (pdf != nullptr) { *pdf = M_PI * 4.0f / 3.0f; }
+    if (pdf != nullptr) { *pdf = M_PI_4; }
     Eigen::Vector3f p;
     do {
         for (int i = 0; i < 3; ++i) {

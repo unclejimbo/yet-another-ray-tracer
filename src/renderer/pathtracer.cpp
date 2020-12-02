@@ -60,21 +60,24 @@ Eigen::Array3f PathTracer::_path_tracing(const Scene& scene,
                 rayhit.hit.Ng_y = normal(1);
                 rayhit.hit.Ng_z = normal(2);
             }
-
             auto hitpt = get_hitpt(rayhit);
-            Eigen::Vector3f emission =
-                scene.materials()[rayhit.hit.geomID]->emitted(
-                    rayhit.hit.u, rayhit.hit.v, hitpt);
-            Eigen::Vector3f rayout;
-            Eigen::Array3f reflectance;
-            if (scene.materials()[rayhit.hit.geomID]->scatter(
-                    rayhit, rayout, reflectance)) {
-                throughput *= emission.array() + reflectance;
-                rayhit = make_rayhit(hitpt, rayout, 0.0001f);
+            auto hitmat = scene.materials()[rayhit.hit.geomID];
+
+            if (hitmat->is_emissive()) {
+                Eigen::Vector3f wi; // dumb
+                irradiance = throughput * hitmat->eval(rayhit, wi);
+                break;
             }
             else {
-                irradiance = throughput * emission.array();
-                break;
+                float pdf;
+                auto wi = hitmat->sample(rayhit, pdf);
+                if (wi != Eigen::Vector3f::Zero()) {
+                    throughput *= hitmat->eval(rayhit, wi) / pdf;
+                    rayhit = make_rayhit(hitpt, wi, 1e-4f);
+                }
+                else {
+                    break;
+                }
             }
         }
         else {

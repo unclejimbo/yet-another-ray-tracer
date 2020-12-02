@@ -10,12 +10,9 @@ class YART_API DiffuseLight : public Material
 {
 public:
     explicit DiffuseLight(Texture* texture) : emit(texture) {}
-    bool scatter(const RTCRayHit& rayhit,
-                 Eigen::Vector3f& rayout,
-                 Eigen::Array3f& attenuation) const override;
-    Eigen::Vector3f emitted(float u,
-                            float v,
-                            const Eigen::Vector3f& p) const override;
+    Eigen::Array3f eval(const RTCRayHit& rayhit,
+                        const Eigen::Vector3f& wi) const override;
+    bool is_emissive() const override { return true; }
 
 public:
     Texture* emit;

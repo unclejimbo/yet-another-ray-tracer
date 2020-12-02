@@ -10,9 +10,9 @@ class YART_API Lambertian : public Material
 {
 public:
     explicit Lambertian(Texture* texture) : texture(texture) {}
-    bool scatter(const RTCRayHit& rayhit,
-                 Eigen::Vector3f& rayout,
-                 Eigen::Array3f& attenuation) const override;
+    Eigen::Vector3f sample(const RTCRayHit& rayhit, float& pdf) const override;
+    Eigen::Array3f eval(const RTCRayHit& rayhit,
+                        const Eigen::Vector3f& wi) const override;
 
 public:
     Texture* texture;

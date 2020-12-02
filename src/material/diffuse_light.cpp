@@ -1,20 +1,13 @@
 #include <yart/material/diffuse_light.h>
+#include "../util/rayhit.h"
 
 namespace yart
 {
 
-bool DiffuseLight::scatter(const RTCRayHit&,
-                           Eigen::Vector3f&,
-                           Eigen::Array3f&) const
+Eigen::Array3f DiffuseLight::eval(const RTCRayHit& rayhit,
+                                  const Eigen::Vector3f& wi) const
 {
-    return false;
-}
-
-Eigen::Vector3f DiffuseLight::emitted(float u,
-                                      float v,
-                                      const Eigen::Vector3f& p) const
-{
-    return emit->value(u, v, p);
+    return emit->value(rayhit.hit.u, rayhit.hit.v, get_hitpt(rayhit));
 }
 
 } // namespace yart

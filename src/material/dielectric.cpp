@@ -12,42 +12,47 @@ static inline float _schlick_fresnel(float cosine, float rindex)
     return r0 + (1.0f - r0) * std::pow((1.0f - cosine), 5);
 }
 
-bool Dielectric::scatter(const RTCRayHit& rayhit,
-                         Eigen::Vector3f& rayout,
-                         Eigen::Array3f& attenuation) const
+Eigen::Vector3f Dielectric::sample(const RTCRayHit& rayhit, float& pdf) const
 {
-    attenuation = Eigen::Array3f::Ones();
-    auto rayin = get_raydir(rayhit);
+    pdf = 1.0f;
+
+    Eigen::Vector3f wi = Eigen::Vector3f::Zero();
+    auto wo = get_raydir(rayhit);
     auto normal = get_hitnormal(rayhit);
 
     Eigen::Vector3f outward_normal;
     float ni_over_nt, cosine, reflect_prob;
-    if (rayin.dot(normal) > 0.0f) { // solid to air
+    if (wo.dot(normal) > 0.0f) { // solid to air
         outward_normal = -normal;
         ni_over_nt = rindex;
-        cosine = rindex * rayin.normalized().dot(normal);
+        cosine = rindex * wo.normalized().dot(normal);
     }
     else { // air to solid
         outward_normal = normal;
         ni_over_nt = 1.0f / rindex;
-        cosine = -rayin.normalized().dot(normal);
+        cosine = -wo.normalized().dot(normal);
     }
 
-    auto refracted = refract(rayin, outward_normal.normalized(), ni_over_nt);
+    auto refracted = refract(wo, outward_normal.normalized(), ni_over_nt);
     if (refracted.has_value()) {
         reflect_prob = _schlick_fresnel(cosine, rindex);
         if (Material::_sampler.uniform_1d() < reflect_prob) { // fresnel
-            rayout = reflect(rayin, normal.normalized());
+            wi = reflect(wo, normal.normalized());
         }
         else { // transmission
-            rayout = *refracted;
+            wi = *refracted;
         }
     }
     else { // total reflection
-        rayout = reflect(rayin, normal.normalized());
+        wi = reflect(wo, normal.normalized());
     }
+    return wi;
+}
 
-    return true;
+Eigen::Array3f Dielectric::eval(const RTCRayHit& rayhit,
+                                const Eigen::Vector3f& wi) const
+{
+    return Eigen::Array3f::Ones();
 }
 
 } // namespace yart

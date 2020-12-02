@@ -4,17 +4,22 @@
 namespace yart
 {
 
-bool Lambertian::scatter(const RTCRayHit& rayhit,
-                         Eigen::Vector3f& rayout,
-                         Eigen::Array3f& attenuation) const
+Eigen::Vector3f Lambertian::sample(const RTCRayHit& rayhit, float& pdf) const
 {
+    pdf = 1.0f;
     auto hitpt = get_hitpt(rayhit);
     auto normal = get_hitnormal(rayhit);
-    rayout =
+    Eigen::Vector3f wi =
         hitpt + normal.normalized() + Material::_sampler.uniform_in_sphere();
-    rayout -= hitpt;
-    attenuation = texture->value(rayhit.hit.u, rayhit.hit.v, hitpt);
-    return true;
+    wi -= hitpt;
+    return wi;
+}
+
+Eigen::Array3f Lambertian::eval(const RTCRayHit& rayhit,
+                                const Eigen::Vector3f& wi) const
+{
+    auto hitpt = get_hitpt(rayhit);
+    return texture->value(rayhit.hit.u, rayhit.hit.v, hitpt);
 }
 
 } // namespace yart
