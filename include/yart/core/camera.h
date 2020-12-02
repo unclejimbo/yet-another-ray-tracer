@@ -1,6 +1,7 @@
 #pragma once
 
 #include <yart/core/common.h>
+#include <yart/core/sampler.h>
 #include <embree3/rtcore.h>
 #include <Eigen/Core>
 #include <limits>
@@ -65,6 +66,9 @@ public:
         float t,
         float near = 0.0f,
         float far = std::numeric_limits<float>::max()) const = 0;
+
+protected:
+    static Sampler _sampler;
 
 protected:
     Eigen::Vector3f _pos{ 0.0f, 0.0f, 0.0f };

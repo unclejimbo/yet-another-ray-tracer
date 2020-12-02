@@ -1,7 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <yart/camera/perspective.h>
 #include "../util/macro.h"
-#include "../util/random.h"
 #include "../util/rayhit.h"
 
 namespace yart
@@ -60,7 +59,7 @@ RTCRayHit PerspectiveCamera::gen_ray(float s,
                                      float near,
                                      float far) const
 {
-    auto rd = _lens_radius * random_in_unit_disk();
+    auto rd = _lens_radius * Camera::_sampler.uniform_in_disk();
     auto rayorg = this->_pos + rd(0) * this->_u + rd(1) * this->_v;
     Eigen::Vector3f raydir =
         -this->_dir * this->_focus +

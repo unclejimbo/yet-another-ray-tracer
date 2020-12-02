@@ -4,6 +4,8 @@
 namespace yart
 {
 
+Sampler Camera::_sampler;
+
 Camera::Camera(const Eigen::Vector3f& position,
                const Eigen::Vector3f& focus,
                const Eigen::Vector3f& up,
