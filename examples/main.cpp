@@ -50,6 +50,7 @@ void gen_scene_rtiow()
         g_width,
         g_height);
     g_camera->zoom(10.0f);
+    g_scenes[0]->set_camera(*g_camera);
 
     g_geometries.push_back(std::make_unique<yart::Sphere>(
         g_device, 1000.0f, Eigen::Vector3f(0.0f, -1000.0f, 0.0f)));
