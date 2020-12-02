@@ -1,4 +1,5 @@
 #include <yart/material/lambertian.h>
+#include <yart/core/local_frame.h>
 #include "../util/rayhit.h"
 
 namespace yart
@@ -6,20 +7,17 @@ namespace yart
 
 Eigen::Vector3f Lambertian::sample(const RTCRayHit& rayhit, float& pdf) const
 {
-    pdf = 1.0f;
-    auto hitpt = get_hitpt(rayhit);
-    auto normal = get_hitnormal(rayhit);
-    Eigen::Vector3f wi =
-        hitpt + normal.normalized() + Material::_sampler.uniform_in_sphere();
-    wi -= hitpt;
-    return wi;
+    LocalFrame frame(get_hitnormal(rayhit));
+    return frame.local(Material::_sampler.cosine_weighted_on_hemisphere(&pdf));
 }
 
 Eigen::Array3f Lambertian::eval(const RTCRayHit& rayhit,
                                 const Eigen::Vector3f& wi) const
 {
     auto hitpt = get_hitpt(rayhit);
-    return texture->value(rayhit.hit.u, rayhit.hit.v, hitpt);
+    auto normal = get_hitnormal(rayhit).normalized();
+    auto cos_theta = std::abs(wi.normalized().dot(normal));
+    return texture->value(rayhit.hit.u, rayhit.hit.v, hitpt) * cos_theta / M_PI;
 }
 
 } // namespace yart
