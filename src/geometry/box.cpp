@@ -18,6 +18,12 @@ static void intersect(const RTCIntersectFunctionNArguments* args)
     data->intersect(args);
 }
 
+static void occluded(const RTCOccludedFunctionNArguments* args)
+{
+    auto data = reinterpret_cast<BoxData*>(args->geometryUserPtr);
+    data->occluded(args);
+}
+
 BoxData::BoxData(const Eigen::Vector3f& min_corner,
                  const Eigen::Vector3f& max_corner)
     : _p0(min_corner), _p1(max_corner)
@@ -60,6 +66,30 @@ void BoxData::intersect(const RTCIntersectFunctionNArguments* args)
     }
 }
 
+void BoxData::occluded(const RTCOccludedFunctionNArguments* args)
+{
+    YASSERT(args->N == 1);
+
+    std::vector<PlaneData> planes;
+    planes.emplace_back(this->min_corner(), this->z(), this->y());   // left
+    planes.emplace_back(this->min_corner(), this->x(), this->z());   // bottom
+    planes.emplace_back(this->min_corner(), this->y(), this->x());   // back
+    planes.emplace_back(this->max_corner(), -this->y(), -this->z()); // right
+    planes.emplace_back(this->max_corner(), -this->z(), -this->x()); // top
+    planes.emplace_back(this->max_corner(), -this->x(), -this->y()); // front
+    for (auto& plane : planes) {
+        RTCOccludedFunctionNArguments pargs;
+        pargs.valid = args->valid;
+        pargs.N = args->N;
+        pargs.context = args->context;
+        pargs.ray = args->ray;
+        pargs.primID = args->primID;
+        pargs.geomID = args->geomID;
+        pargs.geometryUserPtr = &plane;
+        plane.occluded(&pargs);
+    }
+}
+
 Box::Box(const Device& device,
          const Eigen::Vector3f& min_corner,
          const Eigen::Vector3f& max_corner)
@@ -70,6 +100,7 @@ Box::Box(const Device& device,
     rtcSetGeometryUserData(this->_raw, _data.get());
     rtcSetGeometryBoundsFunction(this->_raw, &bounds, nullptr);
     rtcSetGeometryIntersectFunction(this->_raw, &intersect);
+    rtcSetGeometryOccludedFunction(this->_raw, &occluded);
     rtcCommitGeometry(this->_raw);
 }
 

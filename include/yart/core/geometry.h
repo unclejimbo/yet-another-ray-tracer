@@ -15,6 +15,7 @@ public:
     virtual ~GeometryData() = default;
     virtual void bounds(const RTCBoundsFunctionArguments* args) = 0;
     virtual void intersect(const RTCIntersectFunctionNArguments* args) = 0;
+    virtual void occluded(const RTCOccludedFunctionNArguments* args) = 0;
 };
 
 class YART_API Geometry

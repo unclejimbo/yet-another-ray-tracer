@@ -19,6 +19,12 @@ static void intersect(const RTCIntersectFunctionNArguments* args)
     data->intersect(args);
 }
 
+static void occluded(const RTCOccludedFunctionNArguments* args)
+{
+    auto data = reinterpret_cast<SphereData*>(args->geometryUserPtr);
+    data->occluded(args);
+}
+
 SphereData::SphereData(float radius, const Eigen::Vector3f& center)
     : _radius(radius), _center(center)
 {}
@@ -77,6 +83,31 @@ void SphereData::intersect(const RTCIntersectFunctionNArguments* args)
     }
 }
 
+void SphereData::occluded(const RTCOccludedFunctionNArguments* args)
+{
+    YASSERT(args->N == 1);
+
+    auto ray = reinterpret_cast<RTCRay*>(args->ray);
+    auto rayorg = get_rayorg(*ray);
+    auto raydir = get_raydir(*ray);
+
+    auto oc = rayorg - _center;
+
+    auto a = raydir.dot(raydir);
+    auto b = 2.0f * oc.dot(raydir);
+    auto c = oc.dot(oc) - _radius * _radius;
+    auto d = b * b - 4.0f * a * c;
+    if (d < 0.0f) return; // no hit
+    auto q = std::sqrt(d);
+    auto denom = 0.5f / a;
+    auto t0 = denom * (-b - q);
+    auto t1 = denom * (-b + q);
+
+    auto old_tfar = ray->tfar;
+    if (ray->tnear < t0 && t0 < ray->tfar) { ray->tfar = t0; }
+    if (ray->tnear < t1 && t1 < ray->tfar) { ray->tfar = t1; }
+}
+
 Sphere::Sphere(const Device& device,
                float radius,
                const Eigen::Vector3f& center)
@@ -87,6 +118,7 @@ Sphere::Sphere(const Device& device,
     rtcSetGeometryUserData(this->_raw, _data.get());
     rtcSetGeometryBoundsFunction(this->_raw, &bounds, nullptr);
     rtcSetGeometryIntersectFunction(this->_raw, &intersect);
+    rtcSetGeometryOccludedFunction(this->_raw, &occluded);
     rtcCommitGeometry(this->_raw);
 }
 

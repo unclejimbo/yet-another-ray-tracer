@@ -9,16 +9,24 @@
 namespace yart
 {
 
+inline Eigen::Vector3f get_rayorg(const RTCRay& ray)
+{
+    return Eigen::Vector3f(ray.org_x, ray.org_y, ray.org_z);
+}
+
 inline Eigen::Vector3f get_rayorg(const RTCRayHit& rayhit)
 {
-    return Eigen::Vector3f(
-        rayhit.ray.org_x, rayhit.ray.org_y, rayhit.ray.org_z);
+    return get_rayorg(rayhit.ray);
+}
+
+inline Eigen::Vector3f get_raydir(const RTCRay& ray)
+{
+    return Eigen::Vector3f(ray.dir_x, ray.dir_y, ray.dir_z);
 }
 
 inline Eigen::Vector3f get_raydir(const RTCRayHit& rayhit)
 {
-    return Eigen::Vector3f(
-        rayhit.ray.dir_x, rayhit.ray.dir_y, rayhit.ray.dir_z);
+    return get_raydir(rayhit.ray);
 }
 
 inline Eigen::Vector3f get_hitpt(const RTCRayHit& rayhit)
@@ -41,6 +49,23 @@ inline Eigen::Vector3f transform_hitnormal(
     n = model_to_world.topLeftCorner(3, 3).inverse().transpose() * n;
     n.normalize();
     return n;
+}
+
+inline RTCRay make_ray(const Eigen::Vector3f& rayorg,
+                       const Eigen::Vector3f& raydir,
+                       float tnear = 0.0f,
+                       float tfar = std::numeric_limits<float>::max())
+{
+    RTCRay ray;
+    ray.org_x = rayorg(0);
+    ray.org_y = rayorg(1);
+    ray.org_z = rayorg(2);
+    ray.dir_x = raydir(0);
+    ray.dir_y = raydir(1);
+    ray.dir_z = raydir(2);
+    ray.tnear = tnear;
+    ray.tfar = tfar;
+    return ray;
 }
 
 inline RTCRayHit make_rayhit(const Eigen::Vector3f& rayorg,

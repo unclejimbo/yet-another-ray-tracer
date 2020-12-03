@@ -18,6 +18,12 @@ static void intersect(const RTCIntersectFunctionNArguments* args)
     data->intersect(args);
 }
 
+static void occluded(const RTCOccludedFunctionNArguments* args)
+{
+    auto data = reinterpret_cast<PlaneData*>(args->geometryUserPtr);
+    data->occluded(args);
+}
+
 PlaneData::PlaneData(const Eigen::Vector3f& corner,
                      const Eigen::Vector3f& u,
                      const Eigen::Vector3f v)
@@ -73,6 +79,32 @@ void PlaneData::intersect(const RTCIntersectFunctionNArguments* args)
     rayhit->hit.v = v / this->vlen();
 }
 
+void PlaneData::occluded(const RTCOccludedFunctionNArguments* args)
+{
+    YASSERT(args->N == 1);
+
+    auto ray = reinterpret_cast<RTCRay*>(args->ray);
+    auto rayorg = get_rayorg(*ray);
+    auto raydir = get_raydir(*ray);
+
+    Eigen::Vector3f normal = this->n();
+    auto dn = raydir.dot(normal);
+    if (dn >= 0.0f) { return; } // miss
+
+    Eigen::Vector3f planeorg = this->corner();
+    auto t = ((planeorg - rayorg).dot(normal)) / dn;
+    if (t > ray->tfar || t < ray->tnear) { return; } // out of range
+
+    Eigen::Vector3f p = rayorg + t * raydir;
+    Eigen::Vector3f pp = p - planeorg;
+    auto u = pp.dot(this->udir());
+    if (u < 0.0 || u > this->ulen()) { return; } // out of bound
+    auto v = pp.dot(this->vdir());
+    if (v < 0.0 || v > this->vlen()) { return; } // out of bound
+
+    ray->tfar = t;
+}
+
 Plane::Plane(const Device& device,
              const Eigen::Vector3f& corner,
              const Eigen::Vector3f& u,
@@ -84,6 +116,7 @@ Plane::Plane(const Device& device,
     rtcSetGeometryUserData(this->_raw, _data.get());
     rtcSetGeometryBoundsFunction(this->_raw, &bounds, nullptr);
     rtcSetGeometryIntersectFunction(this->_raw, &intersect);
+    rtcSetGeometryOccludedFunction(this->_raw, &occluded);
     rtcCommitGeometry(this->_raw);
 }
 

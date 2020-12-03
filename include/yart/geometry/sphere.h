@@ -15,6 +15,7 @@ public:
     Eigen::Vector3f center() const { return _center; }
     void bounds(const RTCBoundsFunctionArguments* args) override;
     void intersect(const RTCIntersectFunctionNArguments* args) override;
+    void occluded(const RTCOccludedFunctionNArguments* args) override;
 
 private:
     float _radius;

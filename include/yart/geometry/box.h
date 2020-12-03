@@ -28,6 +28,7 @@ public:
     }
     void bounds(const RTCBoundsFunctionArguments* args) override;
     void intersect(const RTCIntersectFunctionNArguments* args) override;
+    void occluded(const RTCOccludedFunctionNArguments* args) override;
 
 private:
     Eigen::Vector3f _p0;
