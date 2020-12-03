@@ -156,9 +156,9 @@ void gen_scene_cornell_box()
                                       Eigen::Vector3f(0, 555, 0))); // right
     g_geometries.push_back(
         std::make_unique<yart::Plane>(g_device,
-                                      Eigen::Vector3f(213, 554, -227),
+                                      Eigen::Vector3f(213, 554, -337),
                                       Eigen::Vector3f(130, 0, 0),
-                                      Eigen::Vector3f(0, 0, -110))); // light
+                                      Eigen::Vector3f(0, 0, 110))); // light
 
     g_textures.push_back(
         std::make_unique<yart::ConstantTexture>(0.73f, 0.73f, 0.73f));
