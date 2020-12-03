@@ -21,6 +21,7 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/include/yart/material/diffuse_light.h
     ${PROJECT_SOURCE_DIR}/include/yart/material/lambertian.h
     ${PROJECT_SOURCE_DIR}/include/yart/material/metal.h
+    ${PROJECT_SOURCE_DIR}/include/yart/renderer/debug_renderer.h
     ${PROJECT_SOURCE_DIR}/include/yart/renderer/pathtracer.h
     ${PROJECT_SOURCE_DIR}/include/yart/texture/checkerboard.h
     ${PROJECT_SOURCE_DIR}/include/yart/texture/constant.h
@@ -43,6 +44,7 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/src/material/diffuse_light.cpp
     ${PROJECT_SOURCE_DIR}/src/material/lambertian.cpp
     ${PROJECT_SOURCE_DIR}/src/material/metal.cpp
+    ${PROJECT_SOURCE_DIR}/src/renderer/debug_renderer.cpp
     ${PROJECT_SOURCE_DIR}/src/renderer/pathtracer.cpp
     ${PROJECT_SOURCE_DIR}/src/texture/checkerboard.cpp
     ${PROJECT_SOURCE_DIR}/src/texture/constant.cpp
