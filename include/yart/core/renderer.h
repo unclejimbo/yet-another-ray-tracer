@@ -1,6 +1,7 @@
 #pragma once
 
 #include <yart/core/common.h>
+#include <yart/core/sampler.h>
 #include <Eigen/Core>
 #include <vector>
 
@@ -31,6 +32,9 @@ protected:
                                          int x,
                                          int y,
                                          int& num_rays) = 0;
+
+protected:
+    static Sampler _sampler;
 
 private:
     void _render_task_tiled(const Scene& scene,

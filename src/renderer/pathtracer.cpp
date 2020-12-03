@@ -16,14 +16,12 @@ Eigen::Array3f PathTracer::_render_pixel(const Scene& scene,
 {
     Eigen::Array3f irradiance = Eigen::Array3f::Zero();
 
-    std::random_device rd;
-    std::minstd_rand rd_gen(rd());
-    std::uniform_real_distribution<> rd_number(0.0f, 1.0f);
-
     // random sampling
     for (int s = 0; s < _samples; ++s) {
-        auto u = static_cast<float>(x + rd_number(rd_gen)) / data.width;
-        auto v = static_cast<float>(y + rd_number(rd_gen)) / data.height;
+        auto r1 = Renderer::_sampler.uniform_1d() - 0.5f;
+        auto r2 = Renderer::_sampler.uniform_1d() - 0.5f;
+        auto u = (x + r1) / data.width;
+        auto v = (y + r2) / data.height;
         auto rayhit = scene.camera()->gen_ray(u, v);
         irradiance += _path_tracing(scene, rayhit, num_rays);
     }

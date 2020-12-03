@@ -7,6 +7,8 @@
 namespace yart
 {
 
+Sampler Renderer::_sampler;
+
 int Renderer::render_tiled(const Scene& scene, RenderData& data)
 {
     _num_rays.resize(omp_get_max_threads(), 0);
