@@ -50,7 +50,7 @@ Eigen::Array3f PathTracer::_path_tracing(const Scene& scene,
             // deal with geometry instancing
             if (rayhit.hit.instID[0] != RTC_INVALID_GEOMETRY_ID) {
                 rayhit.hit.geomID = rayhit.hit.instID[0];
-                auto instance = reinterpret_cast<Instance*>(
+                auto instance = dynamic_cast<Instance*>(
                     scene.geometries()[rayhit.hit.geomID]);
                 Eigen::Vector3f normal =
                     transform_hitnormal(rayhit, instance->matrix());

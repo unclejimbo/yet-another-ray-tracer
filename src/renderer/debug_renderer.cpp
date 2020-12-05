@@ -36,9 +36,9 @@ void DebugRenderer::generate_color_palette(int num)
                 Renderer::_sampler.uniform_1d() * 0.6f - 0.3f;
             _color_palette[i](2) +=
                 Renderer::_sampler.uniform_1d() * 0.6f - 0.3f;
-            std::clamp(_color_palette[i](0), 0.0f, 1.0f);
-            std::clamp(_color_palette[i](1), 0.0f, 1.0f);
-            std::clamp(_color_palette[i](2), 0.0f, 1.0f);
+            _color_palette[i](0) = std::clamp(_color_palette[i](0), 0.0f, 1.0f);
+            _color_palette[i](1) = std::clamp(_color_palette[i](1), 0.0f, 1.0f);
+            _color_palette[i](2) = std::clamp(_color_palette[i](2), 0.0f, 1.0f);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace yart
 {
 
 Instance::Instance(const Device& device, const Scene& scene)
-    : Geometry(device, RTC_GEOMETRY_TYPE_INSTANCE)
+    : Geometry(device, RTC_GEOMETRY_TYPE_INSTANCE), _scene(&scene)
 {
     _trans.setIdentity();
     rtcSetGeometryInstancedScene(this->_raw, scene.raw());

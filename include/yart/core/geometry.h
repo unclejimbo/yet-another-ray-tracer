@@ -22,7 +22,7 @@ class YART_API Geometry
 {
 public:
     Geometry(const Device& device, RTCGeometryType type);
-    ~Geometry();
+    virtual ~Geometry();
     RTCGeometry raw() const { return _raw; }
 
 protected:

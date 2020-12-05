@@ -61,13 +61,15 @@ generate_export_header(yart
     EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/include/yart/core/common.h
 )
 
+get_target_property(Eigen3_INCLUDE_DIRS Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
 target_compile_features(yart PUBLIC cxx_std_17)
 target_compile_options(yart PRIVATE
     $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
         -pipe -march=native
         $<$<CONFIG:Debug>:-O0 -Wall -Wextra>>
     $<$<CXX_COMPILER_ID:MSVC>:
-        $<$<CONFIG:Debug>:/Od /Wall /Zi>>
+        /experimental:external "SHELL: /external:I ${Eigen3_INCLUDE_DIRS}" "SHELL: /external:I ${EMBREE_INCLUDE_DIRS}" /external:W0
+        $<$<CONFIG:Debug>:/Od /W4 /Zi>>
 )
 
 target_include_directories(yart

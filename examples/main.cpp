@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <yart/camera/perspective.h>
 #include <yart/core/device.h>
 #include <yart/core/scene.h>
@@ -12,6 +13,7 @@
 #include <yart/renderer/pathtracer.h>
 #include <yart/texture/constant.h>
 #include <chrono>
+#include <cmath>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -115,7 +117,6 @@ void gen_scene_rtiow()
 
 void gen_scene_cornell_box()
 {
-    g_scenes.push_back(std::make_unique<yart::Scene>(g_device)); // main
     g_scenes.push_back(std::make_unique<yart::Scene>(g_device)); // box
 
     g_camera = std::make_unique<yart::PerspectiveCamera>(
@@ -234,6 +235,7 @@ int main(int argc, char* argv[])
                   << "n=1, cornnel box scene" << std::endl;
         return -1;
     }
+    g_scenes[0]->commit();
 
     std::vector<unsigned char> pixels(g_width * g_height * 3);
     yart::RenderData data;
@@ -244,7 +246,6 @@ int main(int argc, char* argv[])
 
     auto tstart = std::chrono::high_resolution_clock::now();
 
-    g_scenes[0]->commit();
     yart::PathTracer renderer(g_samples, g_depth);
     auto num_rays = renderer.render_tiled(*g_scenes[0], data);
 

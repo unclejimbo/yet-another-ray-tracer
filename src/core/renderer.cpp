@@ -20,9 +20,13 @@ int Renderer::render_tiled(const Scene& scene, RenderData& data)
     for (int i = 0; i < num_tasks; ++i) {
         int thread_id = omp_get_thread_num();
         _render_task_tiled(scene, data, i, thread_id, num_tiles_x);
-#pragma omp critical(cnt)
-        std::cout << "Render progress: " << ++cnt << "/" << num_tasks
-                  << std::endl;
+#pragma omp critical
+        {
+#pragma omp atomic
+            ++cnt;
+            std::cout << "Render progress: " << cnt << "/" << num_tasks
+                      << std::endl;
+        }
     }
     return std::accumulate(_num_rays.begin(), _num_rays.end(), 0);
 }

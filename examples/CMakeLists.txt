@@ -14,7 +14,8 @@ target_compile_options(examples PRIVATE
         -pipe -march=native
         $<$<CONFIG:Debug>:-O0 -Wall -Wextra>>
     $<$<CXX_COMPILER_ID:MSVC>:
-        $<$<CONFIG:Debug>:/Od /Wall /Zi>>
+        /experimental:external "SHELL: /external:I ${CMAKE_SOURCE_DIR}/3rdparty" /external:W0
+        $<$<CONFIG:Debug>:/Od /W4 /Zi>>
 )
 
 target_include_directories(examples PRIVATE

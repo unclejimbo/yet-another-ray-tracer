@@ -1,5 +1,7 @@
+#define _USE_MATH_DEFINES
 #include <yart/material/lambertian.h>
 #include <yart/core/local_frame.h>
+#include <cmath>
 #include "../util/rayhit.h"
 
 namespace yart
