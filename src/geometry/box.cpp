@@ -6,24 +6,6 @@
 namespace yart
 {
 
-static void bounds(const RTCBoundsFunctionArguments* args)
-{
-    auto data = reinterpret_cast<BoxData*>(args->geometryUserPtr);
-    data->bounds(args);
-}
-
-static void intersect(const RTCIntersectFunctionNArguments* args)
-{
-    auto data = reinterpret_cast<BoxData*>(args->geometryUserPtr);
-    data->intersect(args);
-}
-
-static void occluded(const RTCOccludedFunctionNArguments* args)
-{
-    auto data = reinterpret_cast<BoxData*>(args->geometryUserPtr);
-    data->occluded(args);
-}
-
 BoxData::BoxData(const Eigen::Vector3f& min_corner,
                  const Eigen::Vector3f& max_corner)
     : _p0(min_corner), _p1(max_corner)
@@ -93,15 +75,15 @@ void BoxData::occluded(const RTCOccludedFunctionNArguments* args)
 Box::Box(const Device& device,
          const Eigen::Vector3f& min_corner,
          const Eigen::Vector3f& max_corner)
-    : Geometry(device, RTC_GEOMETRY_TYPE_USER)
+    : UserGeometry(device)
 {
     _data = std::make_unique<BoxData>(min_corner, max_corner);
-    rtcSetGeometryUserPrimitiveCount(this->_raw, 1);
-    rtcSetGeometryUserData(this->_raw, _data.get());
-    rtcSetGeometryBoundsFunction(this->_raw, &bounds, nullptr);
-    rtcSetGeometryIntersectFunction(this->_raw, &intersect);
-    rtcSetGeometryOccludedFunction(this->_raw, &occluded);
-    rtcCommitGeometry(this->_raw);
+}
+
+LocalGeometry Box::sample() const
+{
+    // TODO:
+    return LocalGeometry();
 }
 
 } // namespace yart

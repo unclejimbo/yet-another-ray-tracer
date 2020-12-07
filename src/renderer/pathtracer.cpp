@@ -1,5 +1,6 @@
 #include <yart/renderer/pathtracer.h>
 #include <yart/core/camera.h>
+#include <yart/core/light.h>
 #include <yart/core/material.h>
 #include <yart/core/scene.h>
 #include <yart/geometry/instance.h>
@@ -61,12 +62,29 @@ Eigen::Array3f PathTracer::_path_tracing(const Scene& scene,
             auto hitpt = get_hitpt(rayhit);
             auto hitmat = scene.materials()[rayhit.hit.geomID];
 
-            if (hitmat->is_emissive()) {
+            if (i == 0 && hitmat->is_emissive()) {
+                // hitting emissive material with primary ray
                 Eigen::Vector3f wi; // dumb
-                irradiance = throughput * hitmat->eval(rayhit, wi);
+                irradiance += throughput * hitmat->eval(rayhit, wi);
                 break;
             }
             else {
+                // direct lighting
+                for (auto light : scene.lights()) {
+                    RTCRay shadow_ray;
+                    Eigen::Array3f le;
+                    if (light->cast_shadow_ray(hitpt, shadow_ray, le)) {
+                        auto tfar = shadow_ray.tfar;
+                        rtcOccluded1(scene.raw(), &context, &shadow_ray);
+                        if (shadow_ray.tfar == tfar) {
+                            irradiance +=
+                                le * throughput *
+                                hitmat->eval(rayhit, get_raydir(shadow_ray));
+                        }
+                    }
+                }
+
+                // indirect lighting
                 float pdf;
                 auto wi = hitmat->sample(rayhit, pdf);
                 if (wi != Eigen::Vector3f::Zero()) {
@@ -79,7 +97,7 @@ Eigen::Array3f PathTracer::_path_tracing(const Scene& scene,
             }
         }
         else {
-            irradiance = throughput * scene.background().array();
+            irradiance += throughput * scene.background().array();
             break;
         }
     }

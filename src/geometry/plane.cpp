@@ -6,24 +6,6 @@
 namespace yart
 {
 
-static void bounds(const RTCBoundsFunctionArguments* args)
-{
-    auto data = reinterpret_cast<PlaneData*>(args->geometryUserPtr);
-    data->bounds(args);
-}
-
-static void intersect(const RTCIntersectFunctionNArguments* args)
-{
-    auto data = reinterpret_cast<PlaneData*>(args->geometryUserPtr);
-    data->intersect(args);
-}
-
-static void occluded(const RTCOccludedFunctionNArguments* args)
-{
-    auto data = reinterpret_cast<PlaneData*>(args->geometryUserPtr);
-    data->occluded(args);
-}
-
 PlaneData::PlaneData(const Eigen::Vector3f& corner,
                      const Eigen::Vector3f& u,
                      const Eigen::Vector3f v)
@@ -109,15 +91,20 @@ Plane::Plane(const Device& device,
              const Eigen::Vector3f& corner,
              const Eigen::Vector3f& u,
              const Eigen::Vector3f& v)
-    : Geometry(device, RTC_GEOMETRY_TYPE_USER)
+    : UserGeometry(device)
 {
     this->_data = std::make_unique<PlaneData>(corner, u, v);
-    rtcSetGeometryUserPrimitiveCount(this->_raw, 1);
-    rtcSetGeometryUserData(this->_raw, _data.get());
-    rtcSetGeometryBoundsFunction(this->_raw, &bounds, nullptr);
-    rtcSetGeometryIntersectFunction(this->_raw, &intersect);
-    rtcSetGeometryOccludedFunction(this->_raw, &occluded);
-    rtcCommitGeometry(this->_raw);
+}
+
+LocalGeometry Plane::sample() const
+{
+    auto data = dynamic_cast<PlaneData*>(_data.get());
+    LocalGeometry lg;
+    lg.u = _sampler.uniform_1d();
+    lg.v = _sampler.uniform_1d();
+    lg.position = data->corner() + lg.u * data->u() + lg.v * data->v();
+    lg.normal = data->n();
+    return lg;
 }
 
 } // namespace yart

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <yart/core/common.h>
+#include <yart/core/sampler.h>
 #include <embree3/rtcore.h>
+#include <Eigen/Core>
 #include <memory>
 
 namespace yart
@@ -9,13 +11,12 @@ namespace yart
 
 class Device;
 
-class YART_API GeometryData
+struct LocalGeometry
 {
-public:
-    virtual ~GeometryData() = default;
-    virtual void bounds(const RTCBoundsFunctionArguments* args) = 0;
-    virtual void intersect(const RTCIntersectFunctionNArguments* args) = 0;
-    virtual void occluded(const RTCOccludedFunctionNArguments* args) = 0;
+    Eigen::Vector3f position;
+    Eigen::Vector3f normal;
+    float u;
+    float v;
 };
 
 class YART_API Geometry
@@ -24,10 +25,13 @@ public:
     Geometry(const Device& device, RTCGeometryType type);
     virtual ~Geometry();
     RTCGeometry raw() const { return _raw; }
+    virtual LocalGeometry sample() const = 0;
+
+protected:
+    static Sampler _sampler;
 
 protected:
     RTCGeometry _raw;
-    std::unique_ptr<GeometryData> _data;
 };
 
 } // namespace yart

@@ -7,6 +7,7 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/include/yart/core/camera.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/device.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/geometry.h
+    ${PROJECT_SOURCE_DIR}/include/yart/core/light.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/local_frame.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/material.h
     ${PROJECT_SOURCE_DIR}/include/yart/core/renderer.h
@@ -17,6 +18,8 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/include/yart/geometry/instance.h
     ${PROJECT_SOURCE_DIR}/include/yart/geometry/plane.h
     ${PROJECT_SOURCE_DIR}/include/yart/geometry/sphere.h
+    ${PROJECT_SOURCE_DIR}/include/yart/geometry/user_geometry.h
+    ${PROJECT_SOURCE_DIR}/include/yart/light/area_light.h
     ${PROJECT_SOURCE_DIR}/include/yart/material/dielectric.h
     ${PROJECT_SOURCE_DIR}/include/yart/material/diffuse_light.h
     ${PROJECT_SOURCE_DIR}/include/yart/material/lambertian.h
@@ -40,6 +43,8 @@ add_library(yart
     ${PROJECT_SOURCE_DIR}/src/geometry/instance.cpp
     ${PROJECT_SOURCE_DIR}/src/geometry/plane.cpp
     ${PROJECT_SOURCE_DIR}/src/geometry/sphere.cpp
+    ${PROJECT_SOURCE_DIR}/src/geometry/user_geometry.cpp
+    ${PROJECT_SOURCE_DIR}/src/light/area_light.cpp
     ${PROJECT_SOURCE_DIR}/src/material/dielectric.cpp
     ${PROJECT_SOURCE_DIR}/src/material/diffuse_light.cpp
     ${PROJECT_SOURCE_DIR}/src/material/lambertian.cpp

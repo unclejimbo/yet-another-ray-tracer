@@ -7,24 +7,6 @@
 namespace yart
 {
 
-static void bounds(const RTCBoundsFunctionArguments* args)
-{
-    auto data = reinterpret_cast<SphereData*>(args->geometryUserPtr);
-    data->bounds(args);
-}
-
-static void intersect(const RTCIntersectFunctionNArguments* args)
-{
-    auto data = reinterpret_cast<SphereData*>(args->geometryUserPtr);
-    data->intersect(args);
-}
-
-static void occluded(const RTCOccludedFunctionNArguments* args)
-{
-    auto data = reinterpret_cast<SphereData*>(args->geometryUserPtr);
-    data->occluded(args);
-}
-
 SphereData::SphereData(float radius, const Eigen::Vector3f& center)
     : _radius(radius), _center(center)
 {}
@@ -111,15 +93,15 @@ void SphereData::occluded(const RTCOccludedFunctionNArguments* args)
 Sphere::Sphere(const Device& device,
                float radius,
                const Eigen::Vector3f& center)
-    : Geometry(device, RTC_GEOMETRY_TYPE_USER)
+    : UserGeometry(device)
 {
     this->_data = std::make_unique<SphereData>(radius, center);
-    rtcSetGeometryUserPrimitiveCount(this->_raw, 1);
-    rtcSetGeometryUserData(this->_raw, _data.get());
-    rtcSetGeometryBoundsFunction(this->_raw, &bounds, nullptr);
-    rtcSetGeometryIntersectFunction(this->_raw, &intersect);
-    rtcSetGeometryOccludedFunction(this->_raw, &occluded);
-    rtcCommitGeometry(this->_raw);
+}
+
+LocalGeometry Sphere::sample() const
+{
+    // TODO:
+    return LocalGeometry();
 }
 
 } // namespace yart

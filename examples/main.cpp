@@ -6,6 +6,7 @@
 #include <yart/geometry/instance.h>
 #include <yart/geometry/plane.h>
 #include <yart/geometry/sphere.h>
+#include <yart/light/area_light.h>
 #include <yart/material/dielectric.h>
 #include <yart/material/diffuse_light.h>
 #include <yart/material/lambertian.h>
@@ -32,6 +33,7 @@ std::unique_ptr<yart::Camera> g_camera;
 std::vector<std::unique_ptr<yart::Geometry>> g_geometries;
 std::vector<std::unique_ptr<yart::Material>> g_materials;
 std::vector<std::unique_ptr<yart::Texture>> g_textures;
+std::vector<std::unique_ptr<yart::Light>> g_lights;
 std::vector<std::unique_ptr<yart::Scene>> g_scenes;
 
 // ray tracing in one weekend
@@ -117,8 +119,9 @@ void gen_scene_rtiow()
 
 void gen_scene_cornell_box()
 {
-    g_scenes.push_back(std::make_unique<yart::Scene>(g_device)); // box
+    g_scenes.push_back(std::make_unique<yart::Scene>(g_device));
 
+    // camera
     g_camera = std::make_unique<yart::PerspectiveCamera>(
         Eigen::Vector3f(278, 278, 800),
         Eigen::Vector3f(278, 278, 0),
@@ -130,6 +133,7 @@ void gen_scene_cornell_box()
     g_camera->zoom(10.0f);
     g_scenes[0]->set_camera(*g_camera);
 
+    // walls
     g_geometries.push_back(
         std::make_unique<yart::Plane>(g_device,
                                       Eigen::Vector3f(0, 0, -555),
@@ -155,11 +159,6 @@ void gen_scene_cornell_box()
                                       Eigen::Vector3f(555, 0, -555),
                                       Eigen::Vector3f(0, 0, 555),
                                       Eigen::Vector3f(0, 555, 0))); // right
-    g_geometries.push_back(
-        std::make_unique<yart::Plane>(g_device,
-                                      Eigen::Vector3f(213, 554, -337),
-                                      Eigen::Vector3f(130, 0, 0),
-                                      Eigen::Vector3f(0, 0, 110))); // light
 
     g_textures.push_back(
         std::make_unique<yart::ConstantTexture>(0.73f, 0.73f, 0.73f));
@@ -167,7 +166,6 @@ void gen_scene_cornell_box()
         std::make_unique<yart::ConstantTexture>(0.12f, 0.45f, 0.15f));
     g_textures.push_back(
         std::make_unique<yart::ConstantTexture>(0.65f, 0.05f, 0.05f));
-    g_textures.push_back(std::make_unique<yart::ConstantTexture>(15, 15, 15));
 
     g_materials.push_back(
         std::make_unique<yart::Lambertian>(g_textures[0].get()));
@@ -175,25 +173,34 @@ void gen_scene_cornell_box()
         std::make_unique<yart::Lambertian>(g_textures[1].get()));
     g_materials.push_back(
         std::make_unique<yart::Lambertian>(g_textures[2].get()));
-    g_materials.push_back(
-        std::make_unique<yart::DiffuseLight>(g_textures[3].get()));
-    g_materials.push_back(
-        std::make_unique<yart::Metal>(Eigen::Array3f::Ones(), 0.0f));
 
-    // walls and light
     g_scenes[0]->add(*g_geometries[0], *g_materials[0]);
     g_scenes[0]->add(*g_geometries[1], *g_materials[0]);
     g_scenes[0]->add(*g_geometries[2], *g_materials[0]);
     g_scenes[0]->add(*g_geometries[3], *g_materials[1]);
     g_scenes[0]->add(*g_geometries[4], *g_materials[2]);
+
+    // light
+    g_geometries.push_back(
+        std::make_unique<yart::Plane>(g_device,
+                                      Eigen::Vector3f(213, 554, -337),
+                                      Eigen::Vector3f(130, 0, 0),
+                                      Eigen::Vector3f(0, 0, 110)));
+    g_textures.push_back(std::make_unique<yart::ConstantTexture>(2, 2, 2));
+    g_materials.push_back(
+        std::make_unique<yart::DiffuseLight>(g_textures[3].get()));
+    g_lights.push_back(std::make_unique<yart::AreaLight>(
+        *g_geometries[5],
+        *dynamic_cast<yart::DiffuseLight*>(g_materials[3].get())));
     g_scenes[0]->add(*g_geometries[5], *g_materials[3]);
+    g_scenes[0]->add_light(*g_lights[0]);
 
     // boxes
     g_geometries.push_back(
         std::make_unique<yart::Box>(g_device,
                                     Eigen::Vector3f(-0.5, -0.5, -0.5),
                                     Eigen::Vector3f(0.5, 0.5, 0.5)));
-    g_scenes[1]->add(*g_geometries[6], *g_materials[4]);
+    g_scenes[1]->add(*g_geometries[6], *g_materials[0]);
     g_scenes[1]->commit();
     auto binstance_0 = std::make_unique<yart::Instance>(g_device, *g_scenes[1]);
     binstance_0->scale(Eigen::Vector3f(160, 160, 160));

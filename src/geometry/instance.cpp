@@ -1,7 +1,5 @@
 #include <yart/geometry/instance.h>
 #include <yart/core/scene.h>
-#include "../util/macro.h"
-#include "../util/rayhit.h"
 
 namespace yart
 {
@@ -14,6 +12,12 @@ Instance::Instance(const Device& device, const Scene& scene)
     rtcSetGeometryTimeStepCount(this->_raw, 1);
     rtcSetGeometryUserPrimitiveCount(this->_raw, 1);
     _update();
+}
+
+LocalGeometry Instance::sample() const
+{
+    // TODO:
+    return LocalGeometry();
 }
 
 void Instance::translate(const Eigen::Vector3f& vec)

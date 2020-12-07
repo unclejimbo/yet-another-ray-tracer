@@ -4,6 +4,8 @@
 namespace yart
 {
 
+Sampler Geometry::_sampler;
+
 Geometry::Geometry(const Device& device, RTCGeometryType type)
 {
     _raw = rtcNewGeometry(device.raw(), type);
